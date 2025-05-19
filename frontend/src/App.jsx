@@ -11,6 +11,7 @@ import OnboardingPage from "./pages/OnboardingPage.jsx";
 
 import { Toaster } from "react-hot-toast";
 import { axiosInstance } from "./lib/axios.js";
+import { useQuery } from "@tanstack/react-query";
 
 const App = () => {
   const {
@@ -27,6 +28,7 @@ const App = () => {
   });
 
   const authUser = authData?.user;
+console.log("Auth data from App.jsx", authUser);
 
   return (
     <div className="h-screen">
