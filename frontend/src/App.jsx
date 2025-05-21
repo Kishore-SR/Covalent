@@ -9,25 +9,15 @@ import ChatPage from "./pages/ChatPage.jsx";
 import OnboardingPage from "./pages/OnboardingPage.jsx";
 
 import { Toaster } from "react-hot-toast";
-import { axiosInstance } from "./lib/axios.js";
-import { useQuery } from "@tanstack/react-query";
 import VerifyOTPPage from "./pages/VerifyOTPPage.jsx";
+import PageLoader from  "./components/PageLoader.jsx";
+import useAuthUser from "./hooks/useAuthUser.jsx";
 
 const App = () => {
-  const {
-    data: authData,
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ["authUser"],
-    queryFn: async () => {
-      const res = await axiosInstance.get("/auth/me");
-      return res.data;
-    },
-    retry: false, // auth check only once
-  });
+  
+  const {isLoading, authUser} = useAuthUser()
 
-  const authUser = authData?.user;
+  if (isLoading) return <PageLoader />;
 
   return (
     <div className="h-screen">
