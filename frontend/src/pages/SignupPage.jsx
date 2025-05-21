@@ -4,7 +4,8 @@ import { Link, useNavigate } from "react-router";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import emailjs from "emailjs-com";
 import { toast } from "react-hot-toast";
-import { signup } from "../lib/api.js";
+import useSignUp from "../hooks/useSignup";
+
 
 const SignUpPage = () => {
   const [signupData, setSignupData] = useState({
@@ -41,10 +42,7 @@ const SignUpPage = () => {
     }
   };
 
-  const { mutate: signupMutation, isPending } = useMutation({
-    mutationFn: signup,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["authUser"] }),
-  });
+  const { isPending, error, signupMutation } = useSignUp();
 
   const handleSignup = async (e) => {
     e.preventDefault();
