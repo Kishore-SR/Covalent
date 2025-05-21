@@ -28,7 +28,6 @@ const App = () => {
   });
 
   const authUser = authData?.user;
-console.log("Auth data from App.jsx", authUser);
 
   return (
     <div className="h-screen">
