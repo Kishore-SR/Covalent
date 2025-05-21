@@ -10,21 +10,29 @@ import OnboardingPage from "./pages/OnboardingPage.jsx";
 
 import { Toaster } from "react-hot-toast";
 import VerifyOTPPage from "./pages/VerifyOTPPage.jsx";
-import PageLoader from  "./components/PageLoader.jsx";
+import PageLoader from "./components/PageLoader.jsx";
 import useAuthUser from "./hooks/useAuthUser.jsx";
 
 const App = () => {
-  
-  const {isLoading, authUser} = useAuthUser()
+  const { isLoading, authUser } = useAuthUser();
 
   if (isLoading) return <PageLoader />;
+
+  const isAuthenticated = Boolean(authUser);
+  const isOnboarded = authUser?.isOnboarded;
 
   return (
     <div className="h-screen">
       <Routes>
         <Route
           path="/"
-          element={authUser ? <HomePage /> : <Navigate to="/login" />}
+          element={
+            isAuthenticated && isOnboarded ? (
+                <HomePage />
+            ) : (
+              <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
+            )
+          }
         />
         <Route
           path="/signup"
@@ -48,11 +56,20 @@ const App = () => {
         />
         <Route
           path="/onboarding"
-          element={authUser ? <OnboardingPage /> : <Navigate to="/login" />}
+          element={
+            isAuthenticated ? (
+              !isOnboarded ? (
+                <OnboardingPage />
+              ) : (
+                <Navigate to="/" />
+              )
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
         />
 
-      <Route path="/verify-otp" element={<VerifyOTPPage/>} />
-
+        <Route path="/verify-otp" element={<VerifyOTPPage />} />
       </Routes>
 
       <Toaster />

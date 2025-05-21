@@ -54,8 +54,7 @@ const VerifyOTPPage = () => {
     }
   };
 
-  const handleVerify = (e) => {
-    e.preventDefault();
+  const handleVerify = () => {
     const enteredOtp = otp.join("");
     const savedOtp = localStorage.getItem("signup_otp");
 
@@ -77,15 +76,15 @@ const VerifyOTPPage = () => {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 px-4"
+      className="min-h-screen flex items-center justify-center p-4 sm:p-6 md:p-8"
       data-theme="forest"
     >
-      <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+      <div className="border border-primary/25 w-full max-w-sm bg-base-100 rounded-xl shadow-lg p-6">
         <div className="flex flex-col items-center mb-6">
-          <div className="w-14 h-14 bg-blue-50 rounded-full flex items-center justify-center mb-3">
+          <div className="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center mb-3">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-7 w-7 text-blue-600"
+              className="h-7 w-7 text-primary"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -98,16 +97,14 @@ const VerifyOTPPage = () => {
               />
             </svg>
           </div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">
-            Verification Code
-          </h2>
-          <p className="text-center text-gray-600 max-w-sm">
+          <h2 className="text-2xl font-bold mb-2">Verification Code</h2>
+          <p className="text-center opacity-70 max-w-sm">
             We've sent a verification code to
-            <span className="font-medium text-blue-600 block">{email}</span>
+            <span className="font-medium text-primary block">{email}</span>
           </p>
         </div>
 
-        <form onSubmit={handleVerify} className="space-y-6">
+        <div className="space-y-6">
           <div className="flex justify-center space-x-2">
             {otp.map((digit, index) => (
               <input
@@ -119,21 +116,21 @@ const VerifyOTPPage = () => {
                 value={digit}
                 onChange={(e) => handleInputChange(index, e.target.value)}
                 onKeyDown={(e) => handleKeyDown(index, e)}
-                className="w-10 h-12 text-center text-lg font-semibold border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 shadow-sm transition"
+                className="w-10 h-12 text-center text-lg font-semibold border-2 border-primary/30 bg-base-200 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 shadow-sm transition"
               />
             ))}
           </div>
 
           <button
-            type="submit"
-            className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition duration-300 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+            onClick={handleVerify}
+            className="btn btn-primary text-small font-bold font-mono w-4/5 mx-auto block"
           >
-            Verify
+            Verify & Proceed
           </button>
-        </form>
+        </div>
 
         <div className="mt-5 text-center">
-          <p className="text-gray-600 mb-2">
+          <p className="opacity-70 mb-2">
             Time remaining:{" "}
             <span className="font-semibold">{formatTime(timeLeft)}</span>
           </p>

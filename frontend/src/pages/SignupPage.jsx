@@ -92,7 +92,7 @@ const SignUpPage = () => {
             <form onSubmit={handleSignup}>
               <div className="space-y-4">
                 <div>
-                  <h2 className="text-xl font-semibold">Create an Account</h2>
+                  <h2 className="text-xl font-mono">Create an Account</h2>
                   <p className="text-sm opacity-70">
                     Join Covalent and start your language learning adventure!
                   </p>
@@ -184,7 +184,7 @@ const SignUpPage = () => {
                 >
                   {isLoading || isPending ? (
                     <>
-                      <span className="loading loading-spinner loading-xs"></span>
+                      <span className="loading loading-spinner loading-xs font-mono"></span>
                       Sending OTP...
                     </>
                   ) : (
