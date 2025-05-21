@@ -11,6 +11,7 @@ import OnboardingPage from "./pages/OnboardingPage.jsx";
 import { Toaster } from "react-hot-toast";
 import { axiosInstance } from "./lib/axios.js";
 import { useQuery } from "@tanstack/react-query";
+import VerifyOTPPage from "./pages/VerifyOTPPage.jsx";
 
 const App = () => {
   const {
@@ -59,7 +60,11 @@ const App = () => {
           path="/onboarding"
           element={authUser ? <OnboardingPage /> : <Navigate to="/login" />}
         />
+
+      <Route path="/verify-otp" element={<VerifyOTPPage/>} />
+
       </Routes>
+
       <Toaster />
     </div>
   );
