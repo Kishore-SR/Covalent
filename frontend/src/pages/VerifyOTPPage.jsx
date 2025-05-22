@@ -12,12 +12,12 @@ const VerifyOTPPage = () => {
 
   useEffect(() => {
     const storedEmail = localStorage.getItem("signup_email");
-    // if (!storedEmail) {
-    //   toast.error("Unauthorized access to OTP verification page.");
-    //   navigate("/signup");
-    // } else {
-    //   setEmail(storedEmail);
-    // }
+    if (!storedEmail) {
+      toast.error("Unauthorized access to OTP verification page.");
+      navigate("/signup");
+    } else {
+      setEmail(storedEmail);
+    }
 
     if (inputRefs.current[0]) {
       inputRefs.current[0].focus();

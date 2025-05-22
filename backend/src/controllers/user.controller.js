@@ -1,5 +1,5 @@
-import FriendRequest from "../models/FriendRequest.js";
 import User from "../models/User.js";
+import FriendRequest from "../models/FriendRequest.js";
 
 export async function getRecommendedUsers(req, res) {
   try {
@@ -8,18 +8,15 @@ export async function getRecommendedUsers(req, res) {
 
     const recommendedUsers = await User.find({
       $and: [
-        { _id: { $ne: currentUserId } }, //* Don't show the user in recommended list
-        { _id: { $nin: currentUser.friends } }, //* Don't show the user's friends in recommended list
-        { _id: { $nin: currentUser.sentFriendRequests } }, //* Don't show the users that the user has sent friend requests to
-        { $id: { $nin: currentUser.friends } }, // * Don't show the users that the user has received friend requests from
-        { isOnboarded: true }, //* Only show users who have completed onboarding
+        { _id: { $ne: currentUserId } }, //exclude current user
+        { _id: { $nin: currentUser.friends } }, // exclude current user's friends
+        { isOnboarded: true },
       ],
     });
-
     res.status(200).json(recommendedUsers);
   } catch (error) {
-    console.error("Error in getRecommendedUsers controller:", error);
-    res.status(500).json({ message: "Internal server error" });
+    console.error("Error in getRecommendedUsers controller", error.message);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 }
 
@@ -29,44 +26,45 @@ export async function getMyFriends(req, res) {
       .select("friends")
       .populate(
         "friends",
-        "fullName profilePicture nativeLanguage, learningLanguage"
+        "fullName profilePic nativeLanguage learningLanguage"
       );
 
     res.status(200).json(user.friends);
   } catch (error) {
-    console.error("Error in getMyFriends controller:", error);
-    res.status(500).json({ message: "Internal server error" });
+    console.error("Error in getMyFriends controller", error.message);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 }
 
 export async function sendFriendRequest(req, res) {
   try {
     const myId = req.user.id;
-    const { id: recepientId } = req.params;
+    const { id: recipientId } = req.params;
 
-    //* Preventing sending friend request to yourself
-    if (myId === recepientId) {
+    // prevent sending req to yourself
+    if (myId === recipientId) {
       return res
         .status(400)
-        .json({ message: "You cannot send a friend request to yourself." });
+        .json({ message: "You can't send friend request to yourself" });
     }
 
-    const recpient = await User.findById(recepientId);
-    if (!recpient) {
-      return res.status(404).json({ message: "Recpient not found." });
+    const recipient = await User.findById(recipientId);
+    if (!recipient) {
+      return res.status(404).json({ message: "Recipient not found" });
     }
 
-    if (recpient.friends.includes(myId)) {
+    // check if user is already friends
+    if (recipient.friends.includes(myId)) {
       return res
         .status(400)
-        .json({ message: "You are already friends with this user." });
+        .json({ message: "You are already friends with this user" });
     }
 
-    //* To check if the request already exists
+    // check if a req already exists
     const existingRequest = await FriendRequest.findOne({
       $or: [
-        { sender: myId, recipient: recepientId },
-        { sender: recepientId, recipient: myId },
+        { sender: myId, recipient: recipientId },
+        { sender: recipientId, recipient: myId },
       ],
     });
 
@@ -74,40 +72,44 @@ export async function sendFriendRequest(req, res) {
       return res
         .status(400)
         .json({
-          message: "A friend request already exists between you and this user.",
+          message: "A friend request already exists between you and this user",
         });
     }
 
     const friendRequest = await FriendRequest.create({
       sender: myId,
-      recipient: recepientId,
+      recipient: recipientId,
     });
 
     res.status(201).json(friendRequest);
   } catch (error) {
-    console.error("Error in sendFriendRequest controller:", error);
-    res.status(500).json({ message: "Internal server error" });
+    console.error("Error in sendFriendRequest controller", error.message);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 }
 
 export async function acceptFriendRequest(req, res) {
-  try{
-    const{id:requestId} = req.params;
+  try {
+    const { id: requestId } = req.params;
+
     const friendRequest = await FriendRequest.findById(requestId);
 
-    if(!friendRequest){
-      return res.status(404).json({message: "Friend request not found."});
+    if (!friendRequest) {
+      return res.status(404).json({ message: "Friend request not found" });
     }
 
-    if(friendRequest.recipient.toString() !== req.user.id){
-      return res.status(403).json({message: "You are not authorized to accept this friend request."});
+    // Verify the current user is the recipient
+    if (friendRequest.recipient.toString() !== req.user.id) {
+      return res
+        .status(403)
+        .json({ message: "You are not authorized to accept this request" });
     }
 
     friendRequest.status = "accepted";
     await friendRequest.save();
 
-    // add each user to each other's friends list
-    // $addToSet is used to add a value to an array only if it doesn't already exist in the array
+    // add each user to the other's friends array
+    // $addToSet: adds elements to an array only if they do not already exist.
     await User.findByIdAndUpdate(friendRequest.sender, {
       $addToSet: { friends: friendRequest.recipient },
     });
@@ -115,33 +117,33 @@ export async function acceptFriendRequest(req, res) {
     await User.findByIdAndUpdate(friendRequest.recipient, {
       $addToSet: { friends: friendRequest.sender },
     });
-    
-    res.status(200).json({message: "Friend request accepted."});
+
+    res.status(200).json({ message: "Friend request accepted" });
   } catch (error) {
-    console.error("Error in acceptFriendRequest controller:", error);
-    res.status(500).json({ message: "Internal server error" });
+    console.log("Error in acceptFriendRequest controller", error.message);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 }
 
 export async function getFriendRequests(req, res) {
   try {
-    const incommingReqs = await FriendRequest.find({
+    const incomingReqs = await FriendRequest.find({
       recipient: req.user.id,
       status: "pending",
-    }).populate("sender", "fullName profilePicture nativeLanguage learningLanguage");
+    }).populate(
+      "sender",
+      "fullName profilePic nativeLanguage learningLanguage"
+    );
 
     const acceptedReqs = await FriendRequest.find({
       sender: req.user.id,
       status: "accepted",
-    }).populate(
-      "recipient",
-      "fullName profilePicture nativeLanguage learningLanguage"
-    );
+    }).populate("recipient", "fullName profilePic");
 
-    res.status(200).json({incommingReqs, acceptedReqs});
+    res.status(200).json({ incomingReqs, acceptedReqs });
   } catch (error) {
-    console.error("Error in getFriendRequests controller:", error);
-    res.status(500).json({ message: "Internal server error" });
+    console.log("Error in getPendingFriendRequests controller", error.message);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 }
 
@@ -150,9 +152,14 @@ export async function getOutgoingFriendReqs(req, res) {
     const outgoingRequests = await FriendRequest.find({
       sender: req.user.id,
       status: "pending",
-    }).populate("recipient", "fullName profilePicture nativeLanguage learningLanguage");
+    }).populate(
+      "recipient",
+      "fullName profilePic nativeLanguage learningLanguage"
+    );
+
+    res.status(200).json(outgoingRequests);
   } catch (error) {
-    console.log("Error in getOutgoingFriendReqs controller:", error);
-    res.status(500).json({ message: "Internal server error" });
+    console.log("Error in getOutgoingFriendReqs controller", error.message);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 }
