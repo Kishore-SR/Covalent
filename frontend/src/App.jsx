@@ -5,6 +5,7 @@ import { Toaster } from "react-hot-toast";
 import PageLoader from "./components/PageLoader.jsx";
 import useAuthUser from "./hooks/useAuthUser.jsx";
 import Layout from "./components/Layout.jsx"; 
+import { useThemeStore } from "./store/useThemeStore.js";
 
 const HomePage = lazy(() => import("./pages/HomePage.jsx"));
 const SignUpPage = lazy(() => import("./pages/SignupPage.jsx"));
@@ -17,15 +18,16 @@ const VerifyOTPPage = lazy(() => import("./pages/VerifyOTPPage.jsx"));
 
 const App = () => {
   const { isLoading, authUser } = useAuthUser();
-
-  // If the initial authUser data is still loading, show loading spinner
-  if (isLoading) return <PageLoader />;
+  const { theme } = useThemeStore();
 
   const isAuthenticated = Boolean(authUser);
   const isOnboarded = authUser?.isOnboarded;
 
+  // If the initial authUser data is still loading, show loading spinner
+  if (isLoading) return <PageLoader />;
+
   return (
-    <div className="h-screen">
+    <div className="h-screen" data-theme={theme}>
       <Suspense fallback={<PageLoader />}>
         <Routes>
           <Route

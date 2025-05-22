@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "react-hot-toast";
+import { useThemeStore } from "../store/useThemeStore";
 
 const VerifyOTPPage = () => {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
@@ -11,12 +12,12 @@ const VerifyOTPPage = () => {
 
   useEffect(() => {
     const storedEmail = localStorage.getItem("signup_email");
-    if (!storedEmail) {
-      toast.error("Unauthorized access to OTP verification page.");
-      navigate("/signup");
-    } else {
-      setEmail(storedEmail);
-    }
+    // if (!storedEmail) {
+    //   toast.error("Unauthorized access to OTP verification page.");
+    //   navigate("/signup");
+    // } else {
+    //   setEmail(storedEmail);
+    // }
 
     if (inputRefs.current[0]) {
       inputRefs.current[0].focus();
@@ -74,10 +75,12 @@ const VerifyOTPPage = () => {
     return `${mins}:${secs < 10 ? "0" + secs : secs}`;
   };
 
+  const { theme } = useThemeStore();
+  
   return (
     <div
       className="min-h-screen flex items-center justify-center p-4 sm:p-6 md:p-8"
-      data-theme="forest"
+      data-theme={theme}
     >
       <div className="border border-primary/25 w-full max-w-sm bg-base-100 rounded-xl shadow-lg p-6">
         <div className="flex flex-col items-center mb-6">
