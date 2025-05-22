@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Atom } from "lucide-react";
 import { Link, useNavigate } from "react-router";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import emailjs from "emailjs-com";
 import { toast } from "react-hot-toast";
 import useSignUp from "../hooks/useSignup";
@@ -103,7 +103,7 @@ const SignUpPage = () => {
                     </label>
                     <input
                       type="text"
-                      placeholder="John Doe"
+                      placeholder="Rocky Bhai"
                       className="input input-bordered w-full"
                       value={signupData.fullName}
                       onChange={(e) =>
@@ -122,7 +122,7 @@ const SignUpPage = () => {
                     </label>
                     <input
                       type="email"
-                      placeholder="john@gmail.com"
+                      placeholder="rocky@gmail.com"
                       className="input input-bordered w-full"
                       value={signupData.email}
                       onChange={(e) =>
@@ -138,7 +138,7 @@ const SignUpPage = () => {
                     </label>
                     <input
                       type="password"
-                      placeholder="********"
+                      placeholder="••••••••"
                       className="input input-bordered w-full"
                       value={signupData.password}
                       onChange={(e) =>
@@ -208,7 +208,7 @@ const SignUpPage = () => {
           <div className="max-w-md p-8">
             <div className="relative aspect-square max-w-sm mx-auto">
               <img
-                src="/login.png"
+                src="/signup.png"
                 alt="Language connection"
                 className="w-full h-full"
               />
