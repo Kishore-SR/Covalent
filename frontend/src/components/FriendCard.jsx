@@ -1,5 +1,6 @@
 import { Link } from "react-router";
 import { LANGUAGE_TO_FLAG } from "../constants";
+import { MessageSquareIcon } from "lucide-react";
 
 const FriendCard = ({ friend }) => {
   return (
@@ -24,10 +25,8 @@ const FriendCard = ({ friend }) => {
           </span>
         </div>
 
-        <Link
-          to={`/chat/${friend._id}`}
-          className="btn btn-outline w-full focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 hover:border-primary transition"
-        >
+        <Link to={`/chat/${friend._id}`} className="btn btn-success btn-sm">
+          <MessageSquareIcon className="h-4 w-4 mr-1" />
           Message
         </Link>
       </div>
