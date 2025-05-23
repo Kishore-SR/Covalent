@@ -126,7 +126,9 @@ const App = () => {
               )
             }
           />
+          <Route path="/verify-otp" element={<VerifyOTPPage/>}/>
         </Routes>
+
       </Suspense>
 
       <Toaster />

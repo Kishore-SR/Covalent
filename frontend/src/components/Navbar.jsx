@@ -16,25 +16,26 @@ const Navbar = () => {
   const [notificationCount, setNotificationCount] = useState(0);
 
   const { logoutMutation } = useLogout();
-  
+
   // Fetch notifications
   const { data: friendRequests } = useQuery({
     queryKey: ["friendRequests"],
     queryFn: getFriendRequests,
   });
-    // Store which notifications have been seen
+  // Store which notifications have been seen
   const [viewedAcceptedIds, setViewedAcceptedIds] = useState([]);
-  
+
   useEffect(() => {
     if (friendRequests) {
       const incomingCount = friendRequests.incomingReqs?.length || 0;
-      
+
       // Only count accepted requests that haven't been viewed yet
-      const newAcceptedReqs = friendRequests.acceptedReqs?.filter(
-        req => !viewedAcceptedIds.includes(req._id)
-      ) || [];
+      const newAcceptedReqs =
+        friendRequests.acceptedReqs?.filter(
+          (req) => !viewedAcceptedIds.includes(req._id)
+        ) || [];
       const acceptedCount = newAcceptedReqs.length;
-      
+
       const totalCount = incomingCount + acceptedCount;
       setNotificationCount(totalCount);
       setShowNotificationBadge(totalCount > 0 && !isNotificationsPage);
@@ -45,9 +46,10 @@ const Navbar = () => {
   useEffect(() => {
     if (isNotificationsPage && friendRequests) {
       // Mark all current accepted requests as viewed
-      const acceptedIds = friendRequests.acceptedReqs?.map(req => req._id) || [];
+      const acceptedIds =
+        friendRequests.acceptedReqs?.map((req) => req._id) || [];
       if (acceptedIds.length > 0) {
-        setViewedAcceptedIds(prev => [...prev, ...acceptedIds]);
+        setViewedAcceptedIds((prev) => [...prev, ...acceptedIds]);
       }
       // Hide badge while on notifications page
       setShowNotificationBadge(false);
@@ -57,26 +59,28 @@ const Navbar = () => {
   return (
     <nav className="bg-base-200 border-b border-base-300 sticky top-0 z-30 h-16 flex items-center">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 w-full">
-        {/* ========== Mobile Layout (profile left, icons right) ========== */}
+        {/* ----- Mobile Layout (profile left, icons right) ----- */}
         <div className="flex items-center justify-between w-full sm:hidden">
           {/* Profile pic on left */}
-          <div className="avatar">
-            <div className="w-9 rounded-full">
-              <img
-                src={authUser?.profilePic}
-                alt="User Avatar"
-                rel="noreferrer"
-              />
+          <Link to="/">
+            <div className="avatar">
+              <div className="w-12 rounded-full border border-base-800">
+                <img
+                  src={authUser?.profilePic}
+                  alt="User Avatar"
+                  rel="noreferrer"
+                />
+              </div>
             </div>
-          </div>
+          </Link>
 
           {/* Right side icons */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1">
             <Link to={"/notifications"}>
               <button className="btn btn-ghost btn-circle relative">
                 <BellIcon className="h-6 w-6 text-base-content opacity-70" />
                 {showNotificationBadge && (
-                  <span className="absolute -top-1 -right-1 bg-error text-error-content text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                  <span className="absolute -top-0 -right-0 bg-error text-error-content text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center">
                     {notificationCount > 9 ? "9+" : notificationCount}
                   </span>
                 )}
@@ -94,7 +98,7 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* ========== Desktop Layout (as-is) ========== */}
+        {/* ----- Desktop Layout ----- */}
         <div className="hidden sm:flex items-center justify-end w-full">
           {/* Logo - only in the chat page */}
           {isChatPage && (
@@ -114,7 +118,7 @@ const Navbar = () => {
               <button className="btn btn-ghost btn-circle relative">
                 <BellIcon className="h-6 w-6 text-base-content opacity-70" />
                 {showNotificationBadge && (
-                  <span className="absolute -top-1 -right-1 bg-error text-error-content text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                  <span className="absolute -top-0 -right-0 bg-error text-error-content text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
                     {notificationCount > 9 ? "9+" : notificationCount}
                   </span>
                 )}

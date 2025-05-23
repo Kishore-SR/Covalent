@@ -109,45 +109,51 @@ const NotificationsPage = () => {
                     <div
                       key={notification._id}
                       className="card bg-base-200 shadow-sm"
-                    >
-                      <div className="card-body p-4">
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="flex gap-12">
-                            <div className="items-start flex gap-3">
-                              <div className="avatar mt-1 size-14 rounded-full">
+                    >                      <div className="card-body p-4">
+                        {/* Badge positioned absolutely for mobile and desktop */}
+                        <div className="absolute top-2 right-2 sm:top-4 sm:right-4 sm:mb-14">
+                          <div className="badge badge-success">
+                            <UserCheckIcon className="h-3 w-3 mr-1" />
+                            New Friend
+                          </div>
+                        </div>
+                        
+                        {/* Mobile-friendly notification layout */}
+                        <div className="flex flex-col sm:flex-row gap-4">
+                          {/* User info section */}
+                          <div className="flex gap-3">
+                            <div className="avatar">
+                              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full">
                                 <img
                                   src={notification.recipient.profilePic}
                                   alt={notification.recipient.fullName}
+                                  className="object-cover"
                                 />
                               </div>
-                              <div className="flex-1">
-                                <h3 className="font-semibold">
-                                  {notification.recipient.fullName}
-                                </h3>
-                                <p className="text-sm my-1">
-                                  Accepted your friend request
-                                </p>
-                                <p className="text-xs flex items-center opacity-70">
-                                  <ClockIcon className="h-3 w-3 mr-1" />
-                                  Recently
-                                </p>
-                              </div>
                             </div>
-
-                            <div className="flex items-center">
-                              <Link
-                                to={`/chat/${notification.recipient._id}`}
-                                className="btn btn-primary btn-sm"
-                              >
-                                <MessageSquareIcon className="h-4 w-4 mr-1" />
-                                Message
-                              </Link>
+                            <div className="flex-1">
+                              <h3 className="font-semibold">
+                                {notification.recipient.fullName}
+                              </h3>
+                              <p className="text-sm my-1">
+                                Accepted your friend request
+                              </p>
+                              <p className="text-xs flex items-center opacity-70 mb-4">
+                                <ClockIcon className="h-3 w-3 mr-1" />
+                                Recently
+                              </p>
                             </div>
                           </div>
 
-                          <div className="badge badge-success mt-1">
-                            <UserCheckIcon className="h-3 w-3 mr-1" />
-                            New Friend
+                          {/* Message button - full width on mobile, auto on desktop */}
+                          <div className="mt-0 sm:mt-6 sm:self-center sm:ml-auto sm:gap-16">
+                            <Link
+                              to={`/chat/${notification.recipient._id}`}
+                              className="btn btn-primary btn-sm w-full sm:w-auto"
+                            >
+                              <MessageSquareIcon className="h-4 w-4 mr-1" />
+                              Message
+                            </Link>
                           </div>
                         </div>
                       </div>
