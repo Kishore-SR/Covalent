@@ -15,6 +15,7 @@ import {
   UserCheckIcon,
   UserPlusIcon,
   UsersIcon,
+  InfoIcon,
 } from "lucide-react";
 
 import FriendCard, { getLanguageFlag } from "../components/FriendCard";
@@ -109,7 +110,27 @@ const HomePage = () => {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {friends.map((friend) => (
-              <FriendCard key={friend._id} friend={friend} />
+              <div
+                key={friend._id}
+                className="card bg-base-200 hover:shadow-lg transition-all duration-300 group relative"
+              >
+                {friend.bio && (
+                  <div className="dropdown dropdown-hover dropdown-end absolute right-2 top-2 z-10">
+                    <label
+                      tabIndex={0}
+                      className="btn btn-ghost btn-xs btn-circle text-base-content/70 hover:text-base-content"
+                    >
+                      <InfoIcon className="size-4" />
+                    </label>{" "}
+                    <div className="dropdown-content z-[1] card card-compact w-60 shadow-lg bg-base-100 text-base-content border-2 border-primary/20">
+                      <div className="card-body">
+                        <p className="text-sm">{friend.bio}</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                <FriendCard friend={friend} />
+              </div>
             ))}
           </div>
         )}
@@ -184,10 +205,14 @@ const HomePage = () => {
                         <span className="badge badge-outline">
                           {getLanguageFlag(user.skillTrack)}
                           Skill Track: {capitialize(user.skillTrack)}
-                        </span>
+                        </span>{" "}
                       </div>
                       {user.bio && (
-                        <p className="text-sm opacity-70">{user.bio}</p>
+                        <div className="border-l-2 border-base-300 pl-3">
+                          <p className="text-sm opacity-70 line-clamp-2">
+                            {user.bio}
+                          </p>
+                        </div>
                       )}
                       {/* Action button */}
                       {hasIncomingRequest ? (

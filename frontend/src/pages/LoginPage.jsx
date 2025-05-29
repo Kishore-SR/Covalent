@@ -67,7 +67,7 @@ const LoginPage = () => {
                     </label>
                     <input
                       type="password"
-                      placeholder="••••••••"
+                      placeholder="******"
                       className="input input-bordered w-full"
                       value={loginData.password}
                       onChange={(e) =>
@@ -79,7 +79,7 @@ const LoginPage = () => {
 
                   <button
                     type="submit"
-                    className="btn btn-primary w-full font-mono"
+                    className="btn btn-primary w-full font-mono mt-8"
                     disabled={isPending}
                   >
                     {isPending ? (
