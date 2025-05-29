@@ -1,11 +1,13 @@
 import React, { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router";
-import { getUserFriends } from "../lib/api";
+import { getUserFriends, getStreamToken } from "../lib/api";
 import { getLanguageFlag } from "../components/FriendCard";
+import toast from "react-hot-toast";
+import { StreamChat } from "stream-chat";
+import useAuthUser from "../hooks/useAuthUser";
 import {
   MessageSquareIcon,
-  BrainCircuitIcon,
   VideoIcon,
   UserX2Icon,
   SearchIcon,
@@ -13,14 +15,26 @@ import {
   FilterIcon,
 } from "lucide-react";
 
+const STREAM_API_KEY = import.meta.env.VITE_STREAM_API_KEY;
+
 const FriendsPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState("all");
+  const { authUser } = useAuthUser();
+  const queryClient = useQueryClient();
+
   const { data: friends = [], isLoading } = useQuery({
     queryKey: ["friends"],
     queryFn: getUserFriends,
     onSuccess: (data) => console.log("Friends data:", data),
+  });
+
+  // Fetch Stream token for video calls
+  const { data: tokenData } = useQuery({
+    queryKey: ["streamToken"],
+    queryFn: getStreamToken,
+    enabled: !!authUser,
   });
 
   const filteredFriends = friends.filter((friend) => {
@@ -42,6 +56,58 @@ const FriendsPage = () => {
       )
     ),
   ];
+
+  const handleVideoCall = async (friend) => {
+    if (!authUser || !tokenData?.token) {
+      toast.error("You need to be logged in to start a call");
+      return;
+    }
+
+    try {
+      const client = StreamChat.getInstance(STREAM_API_KEY);
+
+      await client.connectUser(
+        {
+          id: authUser._id,
+          name: authUser.fullName,
+          image: authUser.profilePic,
+        },
+        tokenData.token
+      );
+
+      // Create channel ID same way as in ChatPage
+      const channelId = [authUser._id, friend._id].sort().join("-");
+
+      // Create the call URL
+      const callUrl = `${window.location.origin}/call/${channelId}`;
+
+      // Create a temporary channel to send the message
+      const channel = client.channel("messaging", channelId, {
+        members: [authUser._id, friend._id],
+      });
+
+      await channel.watch();
+
+      // Send the call link message
+      await channel.sendMessage({
+        text: `I've started a video call. Join here: \n ${callUrl}`,
+      });
+
+      // Show success toast with friend's name
+      toast.success(
+        `Video call started! Share this link with ${friend.fullName}`
+      );
+      // Open the call in a new window/tab
+      window.open(callUrl, "_blank");
+
+
+      // Clean up
+      await client.disconnectUser();
+    } catch (error) {
+      console.error("Error starting video call:", error);
+      toast.error("Could not start video call. Please try again.");
+    }
+  };
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 bg-base-100 min-h-screen">
@@ -146,7 +212,7 @@ const FriendsPage = () => {
                     </div>
                   </div>
                 </div>
-                {/* Content Column */}{" "}
+                {/* Content Column */}
                 <div className="w-2/3 p-6">
                   <div className="flex flex-col h-full justify-between">
                     {/* User Info */}
@@ -158,7 +224,7 @@ const FriendsPage = () => {
                             "{friend.bio}"
                           </p>
                         </div>
-                      )}{" "}
+                      )}
                       <div className="flex flex-wrap gap-3 mt-3 mb-4">
                         <div className="flex items-center text-sm">
                           <span className="mr-1 text-opacity-70">Native:</span>
@@ -178,7 +244,7 @@ const FriendsPage = () => {
                           </span>
                         </div>
                       </div>
-                    </div>{" "}
+                    </div>
                     {/* Action Buttons */}
                     <div className="flex gap-8">
                       <Link
@@ -188,13 +254,14 @@ const FriendsPage = () => {
                         <MessageSquareIcon className="h-4 w-4 mr-2" />
                         Chat
                       </Link>
-                      <Link
-                        to={`/call/${friend._id}`}
+                      {/* Updated video call button */}
+                      <button
+                        onClick={() => handleVideoCall(friend)}
                         className="btn btn-outline btn-sm flex-1"
                       >
                         <VideoIcon className="h-4 w-4 mr-2" />
                         Call
-                      </Link>
+                      </button>
                     </div>
                   </div>
                 </div>
