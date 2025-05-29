@@ -60,22 +60,23 @@ const NotificationsPage = () => {
                       <div className="card-body p-4">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
+                            {" "}
                             <div className="avatar w-14 h-14 rounded-full bg-base-300">
                               <img
                                 src={request.sender.profilePic}
-                                alt={request.sender.fullName}
+                                alt={`@${request.sender.username}`}
                               />
                             </div>
                             <div>
-                              <h3 className="font-semibold">
-                                {request.sender.fullName}
+                              <h3 className="font-semibold font-mono">
+                                @{request.sender.username}
                               </h3>
                               <div className="flex flex-wrap gap-1.5 mt-1">
                                 <span className="badge badge-secondary badge-sm">
-                                  Native: {request.sender.nativeLanguage}
+                                  Focus: {request.sender.currentFocus}
                                 </span>
                                 <span className="badge badge-outline badge-sm">
-                                  Learning: {request.sender.learningLanguage}
+                                  Track: {request.sender.skillTrack}
                                 </span>
                               </div>
                             </div>
@@ -109,7 +110,9 @@ const NotificationsPage = () => {
                     <div
                       key={notification._id}
                       className="card bg-base-200 shadow-sm"
-                    >                      <div className="card-body p-4">
+                    >
+                      {" "}
+                      <div className="card-body p-4">
                         {/* Badge positioned absolutely for mobile and desktop */}
                         <div className="absolute top-2 right-2 sm:top-4 sm:right-4 sm:mb-14">
                           <div className="badge badge-success">
@@ -117,23 +120,25 @@ const NotificationsPage = () => {
                             New Friend
                           </div>
                         </div>
-                        
+
                         {/* Mobile-friendly notification layout */}
                         <div className="flex flex-col sm:flex-row gap-4">
                           {/* User info section */}
                           <div className="flex gap-3">
                             <div className="avatar">
                               <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full">
+                                {" "}
                                 <img
                                   src={notification.recipient.profilePic}
-                                  alt={notification.recipient.fullName}
+                                  alt={notification.recipient.username}
                                   className="object-cover"
                                 />
                               </div>
                             </div>
                             <div className="flex-1">
-                              <h3 className="font-semibold">
-                                {notification.recipient.fullName}
+                              {" "}
+                              <h3 className="font-semibold font-mono">
+                                @{notification.recipient.username}
                               </h3>
                               <p className="text-sm my-1">
                                 Accepted your friend request

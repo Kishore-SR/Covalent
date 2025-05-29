@@ -38,21 +38,20 @@ const FriendsPage = () => {
   });
 
   const filteredFriends = friends.filter((friend) => {
-    const matchesSearch = friend.fullName
+    const matchesSearch = friend.username
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
     const matchesLanguage =
       selectedLanguage === "all" ||
-      friend.nativeLanguage.toLowerCase() === selectedLanguage.toLowerCase() ||
-      friend.learningLanguage.toLowerCase() === selectedLanguage.toLowerCase();
+      friend.currentFocus.toLowerCase() === selectedLanguage.toLowerCase() ||
+      friend.skillTrack.toLowerCase() === selectedLanguage.toLowerCase();
 
     return matchesSearch && matchesLanguage;
   });
-
   const languages = [
     ...new Set(
       friends.flatMap((friend) =>
-        [friend.nativeLanguage, friend.learningLanguage].filter(Boolean)
+        [friend.currentFocus, friend.skillTrack].filter(Boolean)
       )
     ),
   ];
@@ -69,7 +68,7 @@ const FriendsPage = () => {
       await client.connectUser(
         {
           id: authUser._id,
-          name: authUser.fullName,
+          name: authUser.username,
           image: authUser.profilePic,
         },
         tokenData.token
@@ -95,11 +94,10 @@ const FriendsPage = () => {
 
       // Show success toast with friend's name
       toast.success(
-        `Video call started! Share this link with ${friend.fullName}`
+        `Video call started! Share this link with @${friend.username}`
       );
       // Open the call in a new window/tab
       window.open(callUrl, "_blank");
-
 
       // Clean up
       await client.disconnectUser();
@@ -115,13 +113,14 @@ const FriendsPage = () => {
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
+            {" "}
             <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-3">
               <UsersIcon className="text-primary h-7 w-7" />
-              Your Language Partners
+              Your Engineering Network
               <span className="badge badge-primary ml-2">{friends.length}</span>
             </h1>
             <p className="text-sm opacity-70 mt-1">
-              Connect and practice with your language exchange partners
+              Connect and collaborate with your engineering partners
             </p>
           </div>
         </div>
@@ -146,12 +145,11 @@ const FriendsPage = () => {
               <FilterIcon className="h-4 w-4" />
               Filter
             </button>
-          </div>
-
+          </div>{" "}
           {showFilters && (
             <div className="mt-4 flex flex-wrap gap-2 pt-4 border-t border-base-300">
               <span className="text-sm font-medium mr-2">
-                Filter by language:
+                Filter by focus/track:
               </span>
               <button
                 className={`btn btn-sm ${
@@ -206,7 +204,7 @@ const FriendsPage = () => {
                     <div className="w-24 h-24 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
                       <img
                         src={friend.profilePic}
-                        alt={friend.fullName}
+                        alt={friend.username}
                         className="object-cover"
                       />
                     </div>
@@ -217,30 +215,28 @@ const FriendsPage = () => {
                   <div className="flex flex-col h-full justify-between">
                     {/* User Info */}
                     <div>
-                      <h3 className="text-xl font-bold">{friend.fullName}</h3>
+                      <h3 className="text-xl font-bold">@{friend.username}</h3>
                       {friend.bio && (
                         <div className="mt-2 mb-3 bg-base-100 rounded-lg p-2 border-l-2 border-secondary">
                           <p className="text-sm italic opacity-80">
                             "{friend.bio}"
                           </p>
                         </div>
-                      )}
+                      )}{" "}
                       <div className="flex flex-wrap gap-3 mt-3 mb-4">
                         <div className="flex items-center text-sm">
-                          <span className="mr-1 text-opacity-70">Native:</span>
-                          {getLanguageFlag(friend.nativeLanguage)}
+                          <span className="mr-1 text-opacity-70">Focus:</span>
+                          {getLanguageFlag(friend.currentFocus)}
                           <span className="font-medium">
-                            {friend.nativeLanguage}
+                            {friend.currentFocus}
                           </span>
                         </div>
                         <span className="text-xs opacity-50">•</span>
                         <div className="flex items-center text-sm">
-                          <span className="mr-1 text-opacity-70">
-                            Learning:
-                          </span>
-                          {getLanguageFlag(friend.learningLanguage)}
+                          <span className="mr-1 text-opacity-70">Track:</span>
+                          {getLanguageFlag(friend.skillTrack)}
                           <span className="font-medium">
-                            {friend.learningLanguage}
+                            {friend.skillTrack}
                           </span>
                         </div>
                       </div>

@@ -63,17 +63,24 @@ const Navbar = () => {
         <div className="flex items-center justify-between w-full sm:hidden">
           {/* Profile pic on left */}
           <Link to="/">
-            <div className="avatar">
-              <div className="w-12 rounded-full border border-base-800">
-                <img
-                  src={authUser?.profilePic}
-                  alt="User Avatar"
-                  rel="noreferrer"
-                />
+            <div className="flex rows items-center gap-2">
+              <div className="avatar">
+                <div className="w-11 rounded-full border border-base-800">
+                  <img
+                    src={authUser?.profilePic}
+                    alt="User Avatar"
+                    rel="noreferrer"
+                  />
+                </div>
+              </div>
+              {/* Display username in mobile view */}
+              <div className="mr-2">
+                <div className="text-sm font-mono font-semibold opacity-80">
+                  @{authUser?.username || ""}
+                </div>
               </div>
             </div>
-          </Link>
-
+          </Link>{" "}
           {/* Right side icons */}
           <div className="flex items-center gap-1">
             <Link to={"/notifications"}>
@@ -110,8 +117,7 @@ const Navbar = () => {
                 </span>
               </Link>
             </div>
-          )}
-
+          )}{" "}
           {/* Right-side icons */}
           <div className="flex items-center gap-3 sm:gap-4 ml-auto">
             <Link to={"/notifications"}>

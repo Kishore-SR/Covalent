@@ -44,7 +44,7 @@ const CallPage = () => {
 
         const user = {
           id: authUser._id,
-          name: authUser.fullName,
+          name: authUser.username,
           image: authUser.profilePic,
         };
 

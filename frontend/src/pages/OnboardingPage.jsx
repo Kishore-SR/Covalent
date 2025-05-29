@@ -9,18 +9,16 @@ import {
   ShipWheelIcon,
   ShuffleIcon,
 } from "lucide-react";
-import { LANGUAGES } from "../constants";
+import { FOCUS_AREAS, SKILL_TRACKS } from "../constants";
 import { useThemeStore } from "../store/useThemeStore";
 
 const OnboardingPage = () => {
   const { authUser } = useAuthUser();
   const queryClient = useQueryClient();
-
   const [formState, setFormState] = useState({
-    fullName: authUser?.fullName || "",
     bio: authUser?.bio || "",
-    nativeLanguage: authUser?.nativeLanguage || "",
-    learningLanguage: authUser?.learningLanguage || "",
+    currentFocus: authUser?.nativeLanguage || "",
+    skillTrack: authUser?.learningLanguage || "",
     location: authUser?.location || "",
     profilePic: authUser?.profilePic || "",
   });
@@ -53,7 +51,10 @@ const OnboardingPage = () => {
   const { theme } = useThemeStore();
 
   return (
-    <div className="min-h-screen bg-base-100 flex items-center justify-center p-4" data-theme={theme}>
+    <div
+      className="min-h-screen bg-base-100 flex items-center justify-center p-4"
+      data-theme={theme}
+    >
       <div className="card bg-base-200 w-full max-w-3xl shadow-xl">
         <div className="card-body p-6 sm:p-8">
           <h1 className="text-2xl sm:text-3xl font-bold text-center mb-6">
@@ -77,7 +78,6 @@ const OnboardingPage = () => {
                   </div>
                 )}
               </div>
-
               {/* Generate Random Avatar BTN */}
               <div className="flex items-center gap-2">
                 <button
@@ -88,24 +88,20 @@ const OnboardingPage = () => {
                   <ShuffleIcon className="size-4 mr-2" />
                   Generate Random Avatar
                 </button>
-              </div>
+              </div>{" "}
             </div>
 
-            {/* FULL NAME */}
+            {/* USERNAME DISPLAY */}
             <div className="form-control">
               <label className="label">
-                <span className="label-text">Full Name</span>
+                <span className="label-text">Username</span>
               </label>
-              <input
-                type="text"
-                name="fullName"
-                value={formState.fullName}
-                onChange={(e) =>
-                  setFormState({ ...formState, fullName: e.target.value })
-                }
-                className="input input-bordered w-full"
-                placeholder="Your full name"
-              />
+              <div className="bg-base-100 p-3 rounded-lg border border-base-300">
+                <p className="font-mono font-semibold">@{authUser?.username}</p>
+                <p className="text-xs opacity-70 mt-1">
+                  Your unique username cannot be changed
+                </p>
+              </div>
             </div>
 
             {/* BIO */}
@@ -120,57 +116,56 @@ const OnboardingPage = () => {
                   setFormState({ ...formState, bio: e.target.value })
                 }
                 className="textarea textarea-bordered h-24"
-                placeholder="Tell others about yourself and your language learning goals"
+                placeholder="Tell others about yourself and your engineering goals"
               />
             </div>
 
             {/* LANGUAGES */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* NATIVE LANGUAGE */}
+              {/* NATIVE LANGUAGE */}{" "}
               <div className="form-control">
                 <label className="label">
-                  <span className="label-text">Native Language</span>
+                  <span className="label-text">Current Focus</span>
                 </label>
                 <select
-                  name="nativeLanguage"
-                  value={formState.nativeLanguage}
+                  name="currentFocus"
+                  value={formState.currentFocus}
                   onChange={(e) =>
                     setFormState({
                       ...formState,
-                      nativeLanguage: e.target.value,
+                      currentFocus: e.target.value,
                     })
                   }
                   className="select select-bordered w-full"
                 >
-                  <option value="">Select your native language</option>
-                  {LANGUAGES.map((lang) => (
-                    <option key={`native-${lang}`} value={lang.toLowerCase()}>
-                      {lang}
+                  <option value="">Select your current focus</option>
+                  {FOCUS_AREAS.map((focus) => (
+                    <option key={`focus-${focus}`} value={focus.toLowerCase()}>
+                      {focus}
                     </option>
                   ))}
                 </select>
               </div>
-
-              {/* LEARNING LANGUAGE */}
+              {/* SKILL TRACK */}
               <div className="form-control">
                 <label className="label">
-                  <span className="label-text">Learning Language</span>
+                  <span className="label-text">Skill Track</span>
                 </label>
                 <select
-                  name="learningLanguage"
-                  value={formState.learningLanguage}
+                  name="skillTrack"
+                  value={formState.skillTrack}
                   onChange={(e) =>
                     setFormState({
                       ...formState,
-                      learningLanguage: e.target.value,
+                      skillTrack: e.target.value,
                     })
                   }
                   className="select select-bordered w-full"
                 >
-                  <option value="">Select language you're learning</option>
-                  {LANGUAGES.map((lang) => (
-                    <option key={`learning-${lang}`} value={lang.toLowerCase()}>
-                      {lang}
+                  <option value="">Select your skill track</option>
+                  {SKILL_TRACKS.map((track) => (
+                    <option key={`track-${track}`} value={track.toLowerCase()}>
+                      {track}
                     </option>
                   ))}
                 </select>

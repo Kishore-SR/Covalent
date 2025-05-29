@@ -3,10 +3,10 @@ import jwt from "jsonwebtoken";
 import { upsertStreamUser } from "../lib/stream.js";
 
 export async function signup(req, res) {
-  const { email, password, fullName } = req.body;
+  const { email, password, username } = req.body;
 
   try {
-    if (!email || !password || !fullName) {
+    if (!email || !password || !username) {
       return res.status(400).json({ message: "Please fill all the fields" });
     }
 
@@ -28,23 +28,30 @@ export async function signup(req, res) {
         .json({ message: "Email already exists, please use different mail" });
     }
 
+    // Check if username already exists
+    const existingUsername = await User.findOne({ username });
+    if (existingUsername) {
+      return res
+        .status(400)
+        .json({ message: "Username already taken, please try another one" });
+    }
+
     const idx = Math.floor(Math.random() * 100) + 1;
     const randomAvatrar = `https://avatar.iran.liara.run/public/${idx}.png`;
-
     const newUser = await User.create({
       email,
       password,
-      fullName,
+      username,
       profilePic: randomAvatrar,
     });
 
     try {
       await upsertStreamUser({
         id: newUser._id.toString(),
-        name: newUser.fullName,
+        name: username,
         image: newUser.profilePic || "",
       });
-      console.log(`Stream user created for "${newUser.fullName}"`);
+      console.log(`Stream user created for "@${newUser.username}"`);
     } catch (error) {
       console.error("Error creating/updating Stream user:", error);
     }
@@ -121,49 +128,79 @@ export async function onboard(req, res) {
   try {
     const userId = req.user._id;
 
-    const { fullName, bio, nativeLanguage, learningLanguage, location } = req.body;
+    const { bio, nativeLanguage, learningLanguage, location } = req.body;
 
-    if(!fullName || !bio || !nativeLanguage || !learningLanguage || !location) {
-      return res.status(400).json({ 
-        message: "All fields are required", 
+    if (!bio || !nativeLanguage || !learningLanguage || !location) {
+      return res.status(400).json({
+        message: "All fields are required",
         missingFields: [
-          !fullName && "fullName", 
           !bio && "bio",
           !nativeLanguage && "nativeLanguage",
           !learningLanguage && "learningLanguage",
-          !location && "location"
-        ].filter(Boolean)
-         });
+          !location && "location",
+        ].filter(Boolean),
+      });
     }
 
-    const updatedUser = await User.findByIdAndUpdate(userId, {
-      ...req.body,
-      isOnboarded: true,
-    }, { new: true });
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      {
+        ...req.body,
+        isOnboarded: true,
+      },
+      { new: true }
+    );
 
-    if(!updatedUser) {
+    if (!updatedUser) {
       return res.status(404).json({ message: "User not found" });
     }
-
-    //*Update onboarded user in Stream
-    try{
-
+    try {
       await upsertStreamUser({
         id: updatedUser._id.toString(),
-        name: updatedUser.fullName,
+        name: updatedUser.username,
         image: updatedUser.profilePic || "",
       });
-      console.log(`Stream user updated for "${updatedUser.fullName}"`);
+      console.log(`Stream user updated for "@${updatedUser.username}"`);
     } catch (error) {
       console.error("Error creating/updating Stream user:", error.message);
     }
 
     res.status(200).json({
-      success:true,  user: updatedUser
+      success: true,
+      user: updatedUser,
     });
-
   } catch (error) {
     console.log("Onboarding error:", error);
     res.status(500).json({ message: "Internal server error" });
+  }
+}
+
+// Add this new function to check if a username exists
+export async function checkUsername(req, res) {
+  const { username } = req.params;
+
+  try {
+    if (!username) {
+      return res.status(400).json({ message: "Username is required" });
+    }
+
+    const existingUser = await User.findOne({ username });
+
+    if (existingUser) {
+      // Return 409 Conflict if username exists
+      return res.status(409).json({
+        message: "Username already exists",
+        exists: true,
+      });
+    }
+
+    // Return 200 OK if username is available
+    return res.status(200).json({
+      message: "Username is available",
+      exists: false,
+    });
+  } catch (error) {
+    console.error("Error checking username:", error);
+    return res.status(500).json({ message: "Server error" });
   }
 }

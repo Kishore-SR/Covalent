@@ -17,6 +17,17 @@ export const logout = async () => {
 export const getAuthUser = async () => {
   try {
     const res = await axiosInstance.get("/auth/me");
+
+    // If we have user data, map backend field names to our new field names
+    if (res.data) {
+      return {
+        ...res.data,
+        // Map backend fields to our new field names in the frontend
+        currentFocus: res.data.nativeLanguage,
+        skillTrack: res.data.learningLanguage,
+      };
+    }
+
     return res.data;
   } catch (error) {
     console.log("Error in getAuthUser:", error);
@@ -25,17 +36,46 @@ export const getAuthUser = async () => {
 };
 
 export const completeOnboarding = async (userData) => {
-  const response = await axiosInstance.post("/auth/onboarding", userData);
+  // Map new field names to the backend field names
+  const mappedUserData = {
+    ...userData,
+    // Map currentFocus to nativeLanguage for the backend
+    nativeLanguage: userData.currentFocus,
+    // Map skillTrack to learningLanguage for the backend
+    learningLanguage: userData.skillTrack,
+  };
+
+  const response = await axiosInstance.post("/auth/onboarding", mappedUserData);
   return response.data;
 };
 
 export async function getUserFriends() {
   const response = await axiosInstance.get("/users/friends");
+
+  // Map the backend field names to our new frontend field names for each friend
+  if (response.data && Array.isArray(response.data)) {
+    return response.data.map((friend) => ({
+      ...friend,
+      currentFocus: friend.nativeLanguage,
+      skillTrack: friend.learningLanguage,
+    }));
+  }
+
   return response.data;
 }
 
 export async function getRecommendedUsers() {
   const response = await axiosInstance.get("/users");
+
+  // Map the backend field names to our new frontend field names for each user
+  if (response.data && Array.isArray(response.data)) {
+    return response.data.map((user) => ({
+      ...user,
+      currentFocus: user.nativeLanguage,
+      skillTrack: user.learningLanguage,
+    }));
+  }
+
   return response.data;
 }
 
@@ -51,6 +91,40 @@ export async function sendFriendRequest(userId) {
 
 export async function getFriendRequests() {
   const response = await axiosInstance.get("/users/friend-request");
+
+  // Map the backend field names for each request sender
+  if (response.data) {
+    // Handle incoming requests
+    if (
+      response.data.incomingReqs &&
+      Array.isArray(response.data.incomingReqs)
+    ) {
+      response.data.incomingReqs = response.data.incomingReqs.map((req) => ({
+        ...req,
+        sender: {
+          ...req.sender,
+          currentFocus: req.sender.nativeLanguage,
+          skillTrack: req.sender.learningLanguage,
+        },
+      }));
+    }
+
+    // Handle accepted requests
+    if (
+      response.data.acceptedReqs &&
+      Array.isArray(response.data.acceptedReqs)
+    ) {
+      response.data.acceptedReqs = response.data.acceptedReqs.map((req) => ({
+        ...req,
+        sender: {
+          ...req.sender,
+          currentFocus: req.sender.nativeLanguage,
+          skillTrack: req.sender.learningLanguage,
+        },
+      }));
+    }
+  }
+
   return response.data;
 }
 
@@ -65,3 +139,19 @@ export async function getStreamToken() {
   const response = await axiosInstance.get("/chat/token");
   return response.data;
 }
+
+// Check if username exists in the database
+export const checkUsernameExists = async (username) => {
+  try {
+    const response = await axiosInstance.get(
+      `/auth/check-username/${username}`
+    );
+    return response.data;
+  } catch (error) {
+    // If error status is 409, username exists
+    if (error.response && error.response.status === 409) {
+      return { exists: true };
+    }
+    throw error;
+  }
+};

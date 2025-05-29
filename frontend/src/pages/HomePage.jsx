@@ -90,8 +90,9 @@ const HomePage = () => {
     <div className="p-4 sm:p-6 lg:p-8 bg-base-100 min-h-screen">
       <div className="container mx-auto space-y-10">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          {" "}
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
-            Your Friends
+            Your Network
           </h2>
           {/* <Link to="/notifications" className="btn btn-outline btn-sm">
             <UsersIcon className="mr-2 size-4" />
@@ -117,12 +118,12 @@ const HomePage = () => {
           <div className="mb-6 sm:mb-8">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div>
+                {" "}
                 <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
-                  Meet New Learners
-                </h2>
+                  Meet Engineering Professionals
+                </h2>{" "}
                 <p className="opacity-70">
-                  Discover perfect language exchange partners based on your
-                  profile
+                  Discover professionals in engineering based on your profile
                 </p>
               </div>
             </div>
@@ -136,9 +137,9 @@ const HomePage = () => {
             <div className="card bg-base-200 p-6 text-center">
               <h3 className="font-semibold text-lg mb-2">
                 No recommendations available
-              </h3>
+              </h3>{" "}
               <p className="text-base-content opacity-70">
-                Check back later for new language partners!
+                Check back later for new engineering partners!
               </p>
             </div>
           ) : (
@@ -154,14 +155,17 @@ const HomePage = () => {
                     className="card bg-base-200 hover:shadow-lg transition-all duration-300"
                   >
                     <div className="card-body p-5 space-y-4">
+                      {" "}
                       <div className="flex items-center gap-3">
                         <div className="avatar size-16 rounded-full">
-                          <img src={user.profilePic} alt={user.fullName} />
-                        </div>
-
+                          <img
+                            src={user.profilePic}
+                            alt={`@${user.username}`}
+                          />
+                        </div>{" "}
                         <div>
-                          <h3 className="font-semibold text-lg">
-                            {user.fullName}
+                          <h3 className="font-semibold text-lg font-mono">
+                            @{user.username}
                           </h3>
                           {user.location && (
                             <div className="flex items-center text-xs opacity-70 mt-1">
@@ -170,24 +174,21 @@ const HomePage = () => {
                             </div>
                           )}
                         </div>
-                      </div>
-
-                      {/* Languages with flags */}
+                      </div>{" "}
+                      {/* Skills with icons */}{" "}
                       <div className="flex flex-wrap gap-1.5">
                         <span className="badge badge-secondary">
-                          {getLanguageFlag(user.nativeLanguage)}
-                          Native: {capitialize(user.nativeLanguage)}
+                          {getLanguageFlag(user.currentFocus)}
+                          Current Focus: {capitialize(user.currentFocus)}
                         </span>
                         <span className="badge badge-outline">
-                          {getLanguageFlag(user.learningLanguage)}
-                          Learning: {capitialize(user.learningLanguage)}
+                          {getLanguageFlag(user.skillTrack)}
+                          Skill Track: {capitialize(user.skillTrack)}
                         </span>
                       </div>
-
                       {user.bio && (
                         <p className="text-sm opacity-70">{user.bio}</p>
                       )}
-
                       {/* Action button */}
                       {hasIncomingRequest ? (
                         <button

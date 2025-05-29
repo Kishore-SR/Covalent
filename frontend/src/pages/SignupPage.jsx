@@ -1,23 +1,81 @@
-import { useState } from "react";
-import { Atom } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Atom, RefreshCw } from "lucide-react";
 import { Link, useNavigate } from "react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import emailjs from "emailjs-com";
 import { toast } from "react-hot-toast";
 import useSignUp from "../hooks/useSignUp.jsx";
 import { useThemeStore } from "../store/useThemeStore";
-
+import { USERNAME_ADJECTIVES, USERNAME_CHARACTERS } from "../constants";
+import { checkUsernameExists } from "../lib/api";
 
 const SignUpPage = () => {
   const [signupData, setSignupData] = useState({
-    fullName: "",
     email: "",
     password: "",
+    username: "", // Username field only
   });
 
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  // Function to generate a random username
+  const generateRandomUsername = () => {
+    const randomAdjective =
+      USERNAME_ADJECTIVES[
+        Math.floor(Math.random() * USERNAME_ADJECTIVES.length)
+      ];
+    const randomCharacter =
+      USERNAME_CHARACTERS[
+        Math.floor(Math.random() * USERNAME_CHARACTERS.length)
+      ];
+    return `${randomAdjective}${randomCharacter}`;
+  };
+
+  // Function to check if username exists and generate a new one if needed
+  const generateUniqueUsername = async () => {
+    let isUnique = false;
+    let username = "";
+    let attempts = 0;
+
+    // Try up to 5 times to get a unique username
+    while (!isUnique && attempts < 5) {
+      attempts++;
+      username = generateRandomUsername();
+
+      try {
+        const response = await checkUsernameExists(username);
+        isUnique = !response.exists;
+      } catch (error) {
+        console.error("Error checking username:", error);
+        // If there's an error, we'll assume it's unique and let the server validate
+        isUnique = true;
+      }
+    }
+
+    return username;
+  };
+
+  // Generate a username on component mount
+  useEffect(() => {
+    const initUsername = async () => {
+      const username = await generateUniqueUsername();
+      setSignupData((prev) => ({ ...prev, username }));
+    };
+
+    initUsername();
+  }, []);
+
+  // Function to regenerate username
+  const handleRegenerateUsername = async () => {
+    try {
+      const newUsername = await generateUniqueUsername();
+      setSignupData((prev) => ({ ...prev, username: newUsername }));
+      toast.success("New unique username generated!");
+    } catch (error) {
+      toast.error("Failed to generate a unique username. Please try again.");
+    }
+  };
 
   const SERVICE_ID = "service_y948zbh";
   const TEMPLATE_ID = "template_cmwny1k";
@@ -26,12 +84,11 @@ const SignUpPage = () => {
   const generateOTP = () => {
     return Math.floor(100000 + Math.random() * 900000);
   };
-
   const sendOTP = async (email, otp) => {
     const templateParams = {
       to_email: email,
       otp: otp,
-      full_name: signupData.fullName,
+      full_name: signupData.username,
     };
 
     try {
@@ -72,7 +129,7 @@ const SignUpPage = () => {
     }
   };
   const { theme } = useThemeStore();
-  
+
   return (
     <div
       className="h-screen flex items-center justify-center p-4 sm:p-6 md:p-8"
@@ -94,28 +151,40 @@ const SignUpPage = () => {
                 <div>
                   <h2 className="text-xl font-mono">Create an Account</h2>
                   <p className="text-sm opacity-70">
-                    Join Covalent and start your language learning adventure!
+                    Join Covalent and start your engineering networking journey!
                   </p>
-                </div>
-
+                </div>{" "}
                 <div className="space-y-3">
                   <div className="form-control w-full">
                     <label className="label">
-                      <span className="label-text">Full Name</span>
+                      <span className="label-text">Username</span>
                     </label>
-                    <input
-                      type="text"
-                      placeholder="Rocky Bhai"
-                      className="input input-bordered w-full"
-                      value={signupData.fullName}
-                      onChange={(e) =>
-                        setSignupData({
-                          ...signupData,
-                          fullName: e.target.value,
-                        })
-                      }
-                      required
-                    />
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        className="input input-bordered w-full font-mono"
+                        value={signupData.username || "Generating..."}
+                        readOnly
+                        required
+                      />
+                      <button
+                        type="button"
+                        className="btn btn-square btn-outline"
+                        onClick={handleRegenerateUsername}
+                        title="Generate new username"
+                        disabled={!signupData.username}
+                      >
+                        <RefreshCw
+                          className={`h-5 w-5 ${
+                            !signupData.username ? "animate-spin" : ""
+                          }`}
+                        />
+                      </button>
+                    </div>{" "}
+                    <p className="text-xs opacity-70 mt-1">
+                      You'll stay anonymous — this fun name will be your
+                      identity!
+                    </p>
                   </div>
 
                   <div className="form-control w-full">
@@ -176,7 +245,6 @@ const SignUpPage = () => {
                     </label>
                   </div>
                 </div>
-
                 <button
                   className="btn btn-primary w-full"
                   type="submit"
@@ -191,7 +259,6 @@ const SignUpPage = () => {
                     "Create Account"
                   )}
                 </button>
-
                 <div className="text-center mt-4">
                   <p className="text-sm">
                     Already have an account?{" "}
@@ -211,17 +278,17 @@ const SignUpPage = () => {
             <div className="relative aspect-square max-w-sm mx-auto">
               <img
                 src="/signup.png"
-                alt="Language connection"
+                alt="Engineering connection"
                 className="w-full h-full"
               />
             </div>
             <div className="text-center space-y-3 mt-6">
               <h2 className="text-xl font-semibold">
-                Connect with language partners worldwide
-              </h2>
+                Connect with engineering professionals worldwide
+              </h2>{" "}
               <p className="opacity-70">
-                Practice conversations, make friends, and improve your language
-                skills together
+                Practice collaborations, make connections, and improve your
+                engineering skills together
               </p>
             </div>
           </div>

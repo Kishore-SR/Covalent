@@ -11,7 +11,7 @@ const LoginPage = () => {
   });
 
   // This is custom login hook - optimized version
-  const { isPending, error, loginMutation } = useLogin();  
+  const { isPending, error, loginMutation } = useLogin();
   const handleLogin = (e) => {
     e.preventDefault();
     loginMutation(loginData);
@@ -34,14 +34,13 @@ const LoginPage = () => {
             </span>
           </div>
 
-
           <div className="w-full m-auto">
             <form onSubmit={handleLogin}>
               <div className="space-y-4">
                 <div>
                   <h2 className="text-xl font-semibold">Welcome Back</h2>
                   <p className="text-sm opacity-70">
-                    Sign in to your account to continue your language journey
+                    Sign in to your account to continue your engineering journey
                   </p>
                 </div>
 
@@ -52,7 +51,7 @@ const LoginPage = () => {
                     </label>
                     <input
                       type="email"
-                      placeholder="hello@example.com"
+                      placeholder="yourname@gmail.com"
                       className="input input-bordered w-full"
                       value={loginData.email}
                       onChange={(e) =>
@@ -117,18 +116,18 @@ const LoginPage = () => {
             <div className="relative aspect-square max-w-sm mx-auto">
               <img
                 src="/login.png"
-                alt="Language connection illustration"
+                alt="Engineering connection illustration"
                 className="w-full h-full"
               />
             </div>
 
             <div className="text-center space-y-3 mt-6">
               <h2 className="text-xl font-semibold">
-                Connect with language partners worldwide
-              </h2>
+                Connect with engineering professionals worldwide
+              </h2>{" "}
               <p className="opacity-70">
-                Practice conversations, make friends, and improve your language
-                skills together
+                Practice collaborations, make connections, and improve your
+                engineering skills together
               </p>
             </div>
           </div>
