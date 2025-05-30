@@ -141,10 +141,10 @@ const HomePage = () => {
               <div>
                 {" "}
                 <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
-                  Meet Engineering Professionals
-                </h2>{" "}
+                  Covalent Community
+                </h2>
                 <p className="opacity-70">
-                  Discover professionals in engineering based on your profile
+                  Connect with engineering minds aligned with your journey
                 </p>
               </div>
             </div>

@@ -116,7 +116,7 @@ const FriendsPage = () => {
             {" "}
             <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-3">
               <UsersIcon className="text-primary h-7 w-7" />
-              Your Engineering Network
+              Your Network
               <span className="badge badge-primary ml-2">{friends.length}</span>
             </h1>
             <p className="text-sm opacity-70 mt-1">
@@ -188,7 +188,7 @@ const FriendsPage = () => {
             <p className="mt-2 text-base-content/70">
               {searchTerm || selectedLanguage !== "all"
                 ? "Try changing your search or filter settings"
-                : "Connect with language learners to see them here"}
+                : "Connect with like-minded learners to see them here"}
             </p>
           </div>
         ) : (
