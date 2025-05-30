@@ -6,12 +6,12 @@ export const protectRoute = async (req, res, next) => {
     // Check if JWT_SECRET_KEY exists
     if (!process.env.JWT_SECRET_KEY) {
       console.error("JWT_SECRET_KEY is missing in environment variables");
-      return res.status(500).json({ 
-        message: "Server configuration error - Missing JWT_SECRET_KEY", 
-        error: "ENV_VAR_MISSING" 
+      return res.status(500).json({
+        message: "Server configuration error - Missing JWT_SECRET_KEY",
+        error: "ENV_VAR_MISSING",
       });
     }
-    
+
     // Try to get token from cookie first
     let token = req.cookies.jwt;
 

@@ -12,7 +12,7 @@ const useAuthUser = () => {
           // Return early if no token is found
           return { user: null };
         }
-        
+
         // Call the API with the token
         return await getAuthUser();
       } catch (error) {
@@ -32,7 +32,7 @@ const useAuthUser = () => {
   return {
     isLoading: authUser.isLoading,
     authUser: authUser.data?.user,
-    error: authUser.error
+    error: authUser.error,
   };
 };
 

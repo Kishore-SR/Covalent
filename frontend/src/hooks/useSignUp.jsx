@@ -12,13 +12,13 @@ const useSignUp = () => {
       if (data.token) {
         localStorage.setItem("token", data.token);
       }
-      
+
       queryClient.invalidateQueries({ queryKey: ["authUser"] });
       toast.success("Sign up successful!");
     },
     onError: (error) => {
       console.error("Signup error:", error);
-      
+
       // Handle specific error cases
       if (error.response?.data?.error === "ENV_VAR_MISSING") {
         toast.error("Server configuration error. Please contact support.");

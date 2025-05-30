@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { login } from "../lib/api";
-import toast from "react-hot-toast"; 
+import toast from "react-hot-toast";
 
 const useLogin = () => {
   const queryClient = useQueryClient();
@@ -12,13 +12,13 @@ const useLogin = () => {
       if (data.token) {
         localStorage.setItem("token", data.token);
       }
-      
+
       queryClient.invalidateQueries({ queryKey: ["authUser"] });
-      toast.success("Login successful"); 
+      toast.success("Login successful");
     },
     onError: (error) => {
       console.error("Login error:", error);
-      
+
       // Handle specific error cases
       if (error.response?.data?.error === "ENV_VAR_MISSING") {
         toast.error("Server configuration error. Please contact support.");

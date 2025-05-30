@@ -9,12 +9,12 @@ export async function signup(req, res) {
     // Check if JWT_SECRET_KEY exists
     if (!process.env.JWT_SECRET_KEY) {
       console.error("JWT_SECRET_KEY is missing in environment variables");
-      return res.status(500).json({ 
-        message: "Server configuration error", 
-        error: "ENV_VAR_MISSING" 
+      return res.status(500).json({
+        message: "Server configuration error",
+        error: "ENV_VAR_MISSING",
       });
     }
-    
+
     if (!email || !password || !username) {
       return res.status(400).json({ message: "Please fill all the fields" });
     }
@@ -94,12 +94,12 @@ export async function login(req, res) {
     // Check if JWT_SECRET_KEY exists
     if (!process.env.JWT_SECRET_KEY) {
       console.error("JWT_SECRET_KEY is missing in environment variables");
-      return res.status(500).json({ 
-        message: "Server configuration error", 
-        error: "ENV_VAR_MISSING" 
+      return res.status(500).json({
+        message: "Server configuration error",
+        error: "ENV_VAR_MISSING",
       });
     }
-    
+
     const { email, password } = req.body;
 
     if (!email || !password) {
