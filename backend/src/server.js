@@ -51,19 +51,13 @@ app.get("/", (req, res) => {
     },
   });
 });
-app.get("/check-env", (req, res) => {
-    res.json({
-      mongo: process.env.MONGODB_URI,
-      jwt: process.env.JWT_SECRET_KEY,
-      stream: process.env.STREAM_API_KEY,
-    });
-  });
-  
+
 // Health check endpoint for Vercel
 app.get("/api/health", (req, res) => {
   res.status(200).json({
     status: "ok",
     message: "Covalent API is running",
+     time: new Date().toISOString(), 
     env: {
       JWT_SECRET_KEY: process.env.JWT_SECRET_KEY ? "EXISTS" : "MISSING",
       MONGODB_URI: process.env.MONGODB_URI ? "EXISTS" : "MISSING",
