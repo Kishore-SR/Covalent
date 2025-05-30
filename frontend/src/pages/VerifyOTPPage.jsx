@@ -1,7 +1,9 @@
+import React from "react";
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "react-hot-toast";
 import { useThemeStore } from "../store/useThemeStore";
+import { Helmet } from "react-helmet-async";
 
 const VerifyOTPPage = () => {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
@@ -76,67 +78,75 @@ const VerifyOTPPage = () => {
   };
 
   const { theme } = useThemeStore();
-  
   return (
-    <div
-      className="min-h-screen flex items-center justify-center p-4 sm:p-6 md:p-8"
-      data-theme={theme}
-    >
-      <div className="border border-primary/25 w-full max-w-sm bg-base-100 rounded-xl shadow-lg p-6">
-        <div className="flex flex-col items-center mb-6">
-          <div className="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center mb-3">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-7 w-7 text-primary"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+    <div className="flex h-screen">
+      <Helmet>
+        <title>Verify Account | Covalent</title>
+        <meta
+          name="description"
+          content="Verify your account to join the Covalent engineering community."
+        />
+      </Helmet>{" "}
+      <div
+        className="w-full flex items-center justify-center p-4 sm:p-6 md:p-8"
+        data-theme={theme}
+      >
+        <div className="border border-primary/25 w-full max-w-sm bg-base-100 rounded-xl shadow-lg p-6">
+          <div className="flex flex-col items-center mb-6">
+            <div className="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center mb-3">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-7 w-7 text-primary"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                />
+              </svg>
+            </div>
+            <h2 className="text-2xl font-bold mb-2">Verification Code</h2>
+            <p className="text-center opacity-70 max-w-sm">
+              We've sent a verification code to
+              <span className="font-medium text-primary block">{email}</span>
+            </p>
+          </div>
+
+          <div className="space-y-6">
+            <div className="flex justify-center space-x-2">
+              {otp.map((digit, index) => (
+                <input
+                  key={index}
+                  ref={(el) => (inputRefs.current[index] = el)}
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={1}
+                  value={digit}
+                  onChange={(e) => handleInputChange(index, e.target.value)}
+                  onKeyDown={(e) => handleKeyDown(index, e)}
+                  className="w-10 h-12 text-center text-lg font-semibold border-2 border-primary/30 bg-base-200 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 shadow-sm transition"
+                />
+              ))}
+            </div>
+
+            <button
+              onClick={handleVerify}
+              className="btn btn-primary text-small font-bold font-mono w-4/5 mx-auto block"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-              />
-            </svg>
-          </div>
-          <h2 className="text-2xl font-bold mb-2">Verification Code</h2>
-          <p className="text-center opacity-70 max-w-sm">
-            We've sent a verification code to
-            <span className="font-medium text-primary block">{email}</span>
-          </p>
-        </div>
-
-        <div className="space-y-6">
-          <div className="flex justify-center space-x-2">
-            {otp.map((digit, index) => (
-              <input
-                key={index}
-                ref={(el) => (inputRefs.current[index] = el)}
-                type="text"
-                inputMode="numeric"
-                maxLength={1}
-                value={digit}
-                onChange={(e) => handleInputChange(index, e.target.value)}
-                onKeyDown={(e) => handleKeyDown(index, e)}
-                className="w-10 h-12 text-center text-lg font-semibold border-2 border-primary/30 bg-base-200 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 shadow-sm transition"
-              />
-            ))}
+              Verify & Proceed
+            </button>
           </div>
 
-          <button
-            onClick={handleVerify}
-            className="btn btn-primary text-small font-bold font-mono w-4/5 mx-auto block"
-          >
-            Verify & Proceed
-          </button>
-        </div>
-
-        <div className="mt-5 text-center">
-          <p className="opacity-70 mb-2">
-            Time remaining:{" "}
-            <span className="font-semibold">{formatTime(timeLeft)}</span>
-          </p>
+          <div className="mt-5 text-center">
+            <p className="opacity-70 mb-2">
+              Time remaining:{" "}
+              <span className="font-semibold">{formatTime(timeLeft)}</span>
+            </p>
+          </div>
         </div>
       </div>
     </div>

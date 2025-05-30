@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Atom } from "lucide-react";
 import { Link } from "react-router";
+import { Helmet } from "react-helmet-async";
 import useLogin from "../hooks/useLogin";
 import { useThemeStore } from "../store/useThemeStore";
 
@@ -23,6 +24,13 @@ const LoginPage = () => {
       className="h-screen flex items-center justify-center p-4 sm:p-6 md:p-8"
       data-theme={theme}
     >
+      <Helmet>
+        <title>Login | Covalent</title>
+        <meta
+          name="description"
+          content="Log in to Covalent - Where engineering students connect anonymously and build strong bonds through passion and purpose."
+        />
+      </Helmet>
       <div className="border border-primary/25 flex flex-col lg:flex-row w-full max-w-5xl mx-auto bg-base-100 rounded-xl shadow-lg overflow-hidden">
         {/* LOGIN FORM SECTION */}
         <div className="w-full lg:w-1/2 p-4 sm:p-8 flex flex-col">

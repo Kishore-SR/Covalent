@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { useNavigate, useParams } from "react-router";
 import useAuthUser from "../hooks/useAuthUser";
 import { useQuery } from "@tanstack/react-query";
@@ -76,20 +77,33 @@ const CallPage = () => {
   if (isLoading || isConnecting) return <ChatLoader />;
 
   return (
-    <div className="h-screen flex flex-col items-center justify-center">
-      <div className="relative">
-        {client && call ? (
-          <StreamVideo client={client}>
-            <StreamCall call={call}>
-              <CallContent />
-            </StreamCall>
-          </StreamVideo>
-        ) : (
-          <div className="flex items-center justify-center h-full">
-            <p>Could not initialize call. Please refresh or try again later.</p>
-          </div>
-        )}
-      </div>
+    <div className="h-screen flex flex-col">
+      <Helmet>
+        <title>Video Call | Covalent</title>
+        <meta
+          name="description"
+          content="Connect face-to-face with your engineering peers on Covalent."
+        />
+      </Helmet>
+      {isLoading || !call ? (
+        <ChatLoader />
+      ) : (
+        <div className="relative">
+          {client && call ? (
+            <StreamVideo client={client}>
+              <StreamCall call={call}>
+                <CallContent />
+              </StreamCall>
+            </StreamVideo>
+          ) : (
+            <div className="flex items-center justify-center h-full">
+              <p>
+                Could not initialize call. Please refresh or try again later.
+              </p>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };

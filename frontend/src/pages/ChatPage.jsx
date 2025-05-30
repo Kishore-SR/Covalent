@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { useParams } from "react-router";
 import useAuthUser from "../hooks/useAuthUser";
 import { useQuery } from "@tanstack/react-query";
@@ -96,6 +97,13 @@ const ChatPage = () => {
 
   return (
     <div className="h-[90vh]">
+      <Helmet>
+        <title>Chat | Covalent</title>
+        <meta
+          name="description"
+          content="Chat with your engineering connections on Covalent."
+        />
+      </Helmet>
       <Chat client={chatClient}>
         <Channel channel={channel}>
           <div className="w-full relative">

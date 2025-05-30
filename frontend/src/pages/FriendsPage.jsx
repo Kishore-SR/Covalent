@@ -14,6 +14,7 @@ import {
   UsersIcon,
   FilterIcon,
 } from "lucide-react";
+import { Helmet } from "react-helmet-async";
 
 const STREAM_API_KEY = import.meta.env.VITE_STREAM_API_KEY;
 
@@ -109,6 +110,13 @@ const FriendsPage = () => {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 bg-base-100 min-h-screen">
+      <Helmet>
+        <title>Friends | Covalent</title>
+        <meta
+          name="description"
+          content="Connect with your engineering friends on Covalent."
+        />
+      </Helmet>
       <div className="container mx-auto space-y-8">
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">

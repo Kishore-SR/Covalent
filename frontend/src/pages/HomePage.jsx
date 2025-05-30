@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import {
   acceptFriendRequest,
   getFriendRequests,
@@ -89,6 +90,13 @@ const HomePage = () => {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 bg-base-100 min-h-screen">
+      <Helmet>
+        <title>Covalent Community</title>
+        <meta
+          name="description"
+          content="Where engineering students connect anonymously and build strong bonds through passion and purpose."
+        />
+      </Helmet>
       <div className="container mx-auto space-y-10">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           {" "}

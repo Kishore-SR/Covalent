@@ -1,5 +1,6 @@
 import React, { lazy, Suspense } from "react"; // ADDED lazy and Suspense for better user-experience
 import { Navigate, Route, Routes } from "react-router";
+import { HelmetProvider } from "react-helmet-async";
 
 import { Toaster } from "react-hot-toast";
 import PageLoader from "./components/PageLoader.jsx";
@@ -7,6 +8,7 @@ import useAuthUser from "./hooks/useAuthUser.jsx";
 import Layout from "./components/Layout.jsx";
 import { useThemeStore } from "./store/useThemeStore.js";
 import FriendsPage from "./pages/FriendsPage.jsx";
+import DefaultMeta from "./components/DefaultMeta.jsx";
 
 const HomePage = lazy(() => import("./pages/HomePage.jsx"));
 const SignUpPage = lazy(() => import("./pages/SignupPage.jsx"));
@@ -28,111 +30,113 @@ const App = () => {
   if (isLoading) return <PageLoader />;
 
   return (
-    <div className="h-screen" data-theme={theme}>
-      <Suspense fallback={<PageLoader />}>
-        <Routes>
-          <Route
-            path="/"
-            element={
-              isAuthenticated && isOnboarded ? (
-                <Layout showSidebar={true}>
-                  <HomePage />
-                </Layout>
-              ) : (
-                <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
-              )
-            }
-          />
-          <Route
-            path="/signup"
-            element={
-              !isAuthenticated ? (
-                <SignUpPage />
-              ) : (
-                <Navigate to={isOnboarded ? "/" : "/onboarding"} />
-              )
-            }
-          />
-          <Route
-            path="/login"
-            element={
-              !isAuthenticated ? (
-                <LoginPage />
-              ) : (
-                <Navigate to={isOnboarded ? "/" : "/onboarding"} />
-              )
-            }
-          />
-          <Route
-            path="/notifications"
-            element={
-              isAuthenticated && isOnboarded ? (
-                <Layout showSidebar={true}>
-                  <NotificationsPage />
-                </Layout>
-              ) : (
-                <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
-              )
-            }
-          />
-
-          <Route
-            path="/friends"
-            element={
-              isAuthenticated && isOnboarded ? (
-                <Layout showSidebar={true}>
-                  <FriendsPage />
-                </Layout>
-              ) : (
-                <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
-              )
-            }
-          />
-          <Route
-            path="/call/:id"
-            element={
-              isAuthenticated && isOnboarded ? (
-                <CallPage />
-              ) : (
-                <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
-              )
-            }
-          />
-
-          <Route
-            path="/chat/:id"
-            element={
-              isAuthenticated && isOnboarded ? (
-                <Layout showSidebar={false}>
-                  <ChatPage />
-                </Layout>
-              ) : (
-                <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
-              )
-            }
-          />
-
-          <Route
-            path="/onboarding"
-            element={
-              isAuthenticated ? (
-                !isOnboarded ? (
-                  <OnboardingPage />
+    <HelmetProvider>
+      <div className="h-screen" data-theme={theme}>
+        <DefaultMeta />
+        <Suspense fallback={<PageLoader />}>
+          <Routes>
+            <Route
+              path="/"
+              element={
+                isAuthenticated && isOnboarded ? (
+                  <Layout showSidebar={true}>
+                    <HomePage />
+                  </Layout>
                 ) : (
-                  <Navigate to="/" />
+                  <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
                 )
-              ) : (
-                <Navigate to="/login" />
-              )
-            }
-          />
-          <Route path="/verify-otp" element={<VerifyOTPPage/>}/>
-        </Routes>
+              }
+            />
+            <Route
+              path="/signup"
+              element={
+                !isAuthenticated ? (
+                  <SignUpPage />
+                ) : (
+                  <Navigate to={isOnboarded ? "/" : "/onboarding"} />
+                )
+              }
+            />
+            <Route
+              path="/login"
+              element={
+                !isAuthenticated ? (
+                  <LoginPage />
+                ) : (
+                  <Navigate to={isOnboarded ? "/" : "/onboarding"} />
+                )
+              }
+            />
+            <Route
+              path="/notifications"
+              element={
+                isAuthenticated && isOnboarded ? (
+                  <Layout showSidebar={true}>
+                    <NotificationsPage />
+                  </Layout>
+                ) : (
+                  <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
+                )
+              }
+            />
 
-      </Suspense>
+            <Route
+              path="/friends"
+              element={
+                isAuthenticated && isOnboarded ? (
+                  <Layout showSidebar={true}>
+                    <FriendsPage />
+                  </Layout>
+                ) : (
+                  <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
+                )
+              }
+            />
+            <Route
+              path="/call/:id"
+              element={
+                isAuthenticated && isOnboarded ? (
+                  <CallPage />
+                ) : (
+                  <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
+                )
+              }
+            />
 
-      <Toaster />
-    </div>
+            <Route
+              path="/chat/:id"
+              element={
+                isAuthenticated && isOnboarded ? (
+                  <Layout showSidebar={false}>
+                    <ChatPage />
+                  </Layout>
+                ) : (
+                  <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
+                )
+              }
+            />
+
+            <Route
+              path="/onboarding"
+              element={
+                isAuthenticated ? (
+                  !isOnboarded ? (
+                    <OnboardingPage />
+                  ) : (
+                    <Navigate to="/" />
+                  )
+                ) : (
+                  <Navigate to="/login" />
+                )
+              }
+            />
+            <Route path="/verify-otp" element={<VerifyOTPPage />} />
+          </Routes>
+        </Suspense>
+
+        <Toaster />
+      </div>
+    </HelmetProvider>
   );
 };
 
