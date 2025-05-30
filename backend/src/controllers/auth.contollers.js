@@ -63,12 +63,11 @@ export async function signup(req, res) {
         expiresIn: "12d",
       }
     );
-
     res.cookie("jwt", token, {
       maxAge: 12 * 24 * 60 * 60 * 1000, // 12 days
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
     });
 
     res.status(201).json({ success: true, user: newUser });
@@ -99,14 +98,12 @@ export async function login(req, res) {
     // Create JWT token
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET_KEY, {
       expiresIn: "12d",
-    });
-
-    // Send cookie
+    }); // Send cookie
     res.cookie("jwt", token, {
       maxAge: 12 * 24 * 60 * 60 * 1000, // 12 days
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
     });
 
     res.status(200).json({
@@ -120,7 +117,11 @@ export async function login(req, res) {
 }
 
 export function logout(req, res) {
-  res.clearCookie("jwt");
+  res.clearCookie("jwt", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+  });
   res.status(200).json({ message: "Logout successful" });
 }
 
