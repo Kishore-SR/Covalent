@@ -11,11 +11,10 @@
       "src": "/(.*)",
       "dest": "src/server.js"
     }
-  ],
-  "env": {
-    "JWT_SECRET_KEY": "@jwt_secret_key",
-    "MONGODB_URI": "@mongodb_uri",
-    "STREAM_API_KEY": "@stream_api_key",
-    "STREAM_API_SECRET": "@stream_api_secret"
+  ],  "env": {
+    "JWT_SECRET_KEY": "${JWT_SECRET_KEY}",
+    "MONGODB_URI": "${MONGODB_URI}",
+    "STREAM_API_KEY": "${STREAM_API_KEY}",
+    "STREAM_API_SECRET": "${STREAM_API_SECRET}"
   }
 }
