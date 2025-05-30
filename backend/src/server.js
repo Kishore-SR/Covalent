@@ -51,7 +51,14 @@ app.get("/", (req, res) => {
     },
   });
 });
-
+app.get("/check-env", (req, res) => {
+    res.json({
+      mongo: process.env.MONGODB_URI,
+      jwt: process.env.JWT_SECRET_KEY,
+      stream: process.env.STREAM_API_KEY,
+    });
+  });
+  
 // Health check endpoint for Vercel
 app.get("/api/health", (req, res) => {
   res.status(200).json({
