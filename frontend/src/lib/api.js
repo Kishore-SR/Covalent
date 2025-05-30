@@ -30,6 +30,17 @@ export const getAuthUser = async () => {
 
     return res.data;
   } catch (error) {
+    console.error("Error in getAuthUser:", error);
+    
+    // Check if there's a specific error from the backend
+    if (error.response?.data?.error === "ENV_VAR_MISSING") {
+      throw new Error("Server configuration error");
+    }
+    
+    throw error;
+  }
+};
+  } catch (error) {
     console.log("Error in getAuthUser:", error);
     return null;
   }

@@ -38,16 +38,33 @@ app.use(
 
 // To check the status of backend deployment on vercel
 app.get("/", (req, res) => {
+  // Check if the JWT_SECRET_KEY exists
+  const hasJwtSecret = !!process.env.JWT_SECRET_KEY;
+  
   res.status(200).json({
     message: "Covalent API is running successfully!",
     documentation: "API endpoints start with /api/...",
     status: "online",
+    env: {
+      JWT_SECRET_KEY: hasJwtSecret ? "EXISTS" : "MISSING",
+      NODE_ENV: process.env.NODE_ENV || "development"
+    }
   });
 });
 
 // Health check endpoint for Vercel
 app.get("/api/health", (req, res) => {
-  res.status(200).json({ status: "ok", message: "Covalent API is running" });
+  res.status(200).json({ 
+    status: "ok", 
+    message: "Covalent API is running",
+    env: {
+      JWT_SECRET_KEY: process.env.JWT_SECRET_KEY ? "EXISTS" : "MISSING",
+      MONGODB_URI: process.env.MONGODB_URI ? "EXISTS" : "MISSING",
+      STREAM_API_KEY: process.env.STREAM_API_KEY ? "EXISTS" : "MISSING",
+      STREAM_API_SECRET: process.env.STREAM_API_SECRET ? "EXISTS" : "MISSING",
+      NODE_ENV: process.env.NODE_ENV || "development"
+    }
+  });
 });
 
 app.use(express.json());

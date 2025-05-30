@@ -7,14 +7,26 @@ const useLogin = () => {
 
   const { mutate, isPending, error } = useMutation({
     mutationFn: login,
-    onSuccess: () => {
+    onSuccess: (data) => {
+      // Store token in localStorage if it exists in the response
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+      }
+      
       queryClient.invalidateQueries({ queryKey: ["authUser"] });
       toast.success("Login successful"); 
     },
     onError: (error) => {
-      toast.error(
-        error.response?.data?.message || "Login failed. Please try again."
-      );
+      console.error("Login error:", error);
+      
+      // Handle specific error cases
+      if (error.response?.data?.error === "ENV_VAR_MISSING") {
+        toast.error("Server configuration error. Please contact support.");
+      } else {
+        toast.error(
+          error.response?.data?.message || "Login failed. Please try again."
+        );
+      }
     },
   });
 
