@@ -16,19 +16,21 @@ app.use(
   cors({
     origin:
       process.env.NODE_ENV === "production"
-        ? ["https://your-frontend-app.vercel.app", "http://localhost:5173"]
+        ? ["https://covalents.vercel.app", "http://localhost:5173"]
         : "http://localhost:5173",
     credentials: true, //allow frontend to access cookies
   })
 );
-// Add this before your other routes
+
+// To check the status of backend deployment on vercel
 app.get("/", (req, res) => {
-    res.status(200).json({ 
-      message: "Covalent API is running successfully!", 
-      documentation: "API endpoints start with /api/...",
-      status: "online"
-    });
+  res.status(200).json({
+    message: "Covalent API is running successfully!",
+    documentation: "API endpoints start with /api/...",
+    status: "online",
   });
+});
+
 // Health check endpoint for Vercel
 app.get("/api/health", (req, res) => {
   res.status(200).json({ status: "ok", message: "Covalent API is running" });
