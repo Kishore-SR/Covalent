@@ -40,7 +40,7 @@ const LoginPage = () => {
                 <div>
                   <h2 className="text-xl font-semibold">Welcome Back</h2>
                   <p className="text-sm opacity-70">
-                    Sign in to your account to continue your engineering journey
+                    Sign in and hustle with others chasing the same goals
                   </p>
                 </div>
 
@@ -67,7 +67,7 @@ const LoginPage = () => {
                     </label>
                     <input
                       type="password"
-                      placeholder="******"
+                      placeholder="∗∗∗∗∗∗"
                       className="input input-bordered w-full"
                       value={loginData.password}
                       onChange={(e) =>
@@ -123,11 +123,11 @@ const LoginPage = () => {
 
             <div className="text-center space-y-3 mt-6">
               <h2 className="text-xl font-semibold">
-                Connect with engineering professionals worldwide
+                You’re not the only one chasing dreams
               </h2>{" "}
               <p className="opacity-70">
-                Practice collaborations, make connections, and improve your
-                engineering skills together
+                Find like-minded students, collaborate on ideas and level up
+                without revealing your identity
               </p>
             </div>
           </div>

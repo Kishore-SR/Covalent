@@ -115,7 +115,7 @@ const OnboardingPage = () => {
                 onChange={(e) =>
                   setFormState({ ...formState, bio: e.target.value })
                 }
-                className="textarea textarea-bordered h-24"
+                className="textarea textarea-bordered h-6"
                 placeholder="Tell others about yourself and your engineering goals"
               />
             </div>
@@ -187,7 +187,7 @@ const OnboardingPage = () => {
                     setFormState({ ...formState, location: e.target.value })
                   }
                   className="input input-bordered w-full pl-10"
-                  placeholder="City, Country"
+                  placeholder="City, State"
                 />
               </div>
             </div>

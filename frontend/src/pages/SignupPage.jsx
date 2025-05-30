@@ -151,7 +151,7 @@ const SignUpPage = () => {
                 <div>
                   <h2 className="text-xl font-mono">Create an Account</h2>
                   <p className="text-sm opacity-70">
-                    Join Covalent and start your engineering networking journey!
+                    Join the future engineers who value passion over identity
                   </p>
                 </div>{" "}
                 <div className="space-y-3">
@@ -182,7 +182,7 @@ const SignUpPage = () => {
                       </button>
                     </div>{" "}
                     <p className="text-xs opacity-70 mt-1">
-                      You'll stay anonymous — this fun name will be your
+                      You'll stay anonymous, this fun name will be your
                       identity!
                     </p>
                   </div>
@@ -193,7 +193,7 @@ const SignUpPage = () => {
                     </label>
                     <input
                       type="email"
-                      placeholder="rocky@gmail.com"
+                      placeholder="yourname@gmail.com"
                       className="input input-bordered w-full"
                       value={signupData.email}
                       onChange={(e) =>
@@ -209,7 +209,7 @@ const SignUpPage = () => {
                     </label>
                     <input
                       type="password"
-                      placeholder="••••••••"
+                      placeholder="∗∗∗∗∗∗"
                       className="input input-bordered w-full"
                       value={signupData.password}
                       onChange={(e) =>
@@ -284,11 +284,11 @@ const SignUpPage = () => {
             </div>
             <div className="text-center space-y-3 mt-6">
               <h2 className="text-xl font-semibold">
-                Connect with engineering professionals worldwide
+                You’re not the only one chasing dreams
               </h2>{" "}
               <p className="opacity-70">
-                Practice collaborations, make connections, and improve your
-                engineering skills together
+                Find like-minded students, collaborate on ideas and level up
+                without revealing your identity
               </p>
             </div>
           </div>
