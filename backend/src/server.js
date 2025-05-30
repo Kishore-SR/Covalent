@@ -21,7 +21,14 @@ app.use(
     credentials: true, //allow frontend to access cookies
   })
 );
-
+// Add this before your other routes
+app.get("/", (req, res) => {
+    res.status(200).json({ 
+      message: "Covalent API is running successfully!", 
+      documentation: "API endpoints start with /api/...",
+      status: "online"
+    });
+  });
 // Health check endpoint for Vercel
 app.get("/api/health", (req, res) => {
   res.status(200).json({ status: "ok", message: "Covalent API is running" });
