@@ -29,7 +29,8 @@ app.use(
     },
     credentials: true, //allow frontend to access cookies
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
-    allowedHeaders: ["Content-Type", "Authorization"],
+    allowedHeaders: ["Content-Type", "Authorization", "Set-Cookie"],
+    exposedHeaders: ["Set-Cookie"],
     preflightContinue: false,
     optionsSuccessStatus: 204,
   })

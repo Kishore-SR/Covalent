@@ -55,7 +55,6 @@ export async function signup(req, res) {
     } catch (error) {
       console.error("Error creating/updating Stream user:", error);
     }
-
     const token = jwt.sign(
       { userId: newUser._id },
       process.env.JWT_SECRET_KEY,
@@ -63,14 +62,18 @@ export async function signup(req, res) {
         expiresIn: "12d",
       }
     );
+
+    // Send cookie with proper settings for cross-domain
     res.cookie("jwt", token, {
       maxAge: 12 * 24 * 60 * 60 * 1000, // 12 days
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+      secure: true, // Always use secure for Vercel deployment
+      sameSite: "none", // Required for cross-domain cookies
+      path: "/",
     });
 
-    res.status(201).json({ success: true, user: newUser });
+    // Also send token in response for client-side storage if needed
+    res.status(201).json({ success: true, user: newUser, token });
   } catch (error) {
     console.log("Error in signup controller:", error);
     res.status(500).json({ message: "Internal server error" });
@@ -93,22 +96,25 @@ export async function login(req, res) {
     const isPasswordCorrect = await user.matchPassword(password);
     if (!isPasswordCorrect) {
       return res.status(401).json({ message: "Invalid email or password" });
-    }
-
-    // Create JWT token
+    } // Create JWT token
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET_KEY, {
       expiresIn: "12d",
-    }); // Send cookie
+    });
+
+    // Send cookie with proper settings for cross-domain
     res.cookie("jwt", token, {
       maxAge: 12 * 24 * 60 * 60 * 1000, // 12 days
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+      secure: true, // Always use secure for Vercel deployment
+      sameSite: "none", // Required for cross-domain cookies
+      path: "/",
     });
 
+    // Also send token in response for client-side storage if needed
     res.status(200).json({
       success: true,
       user,
+      token,
     });
   } catch (error) {
     console.log("Error in login controller:", error);
@@ -119,8 +125,9 @@ export async function login(req, res) {
 export function logout(req, res) {
   res.clearCookie("jwt", {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+    secure: true, // Always use secure for Vercel deployment
+    sameSite: "none", // Required for cross-domain cookies
+    path: "/",
   });
   res.status(200).json({ message: "Logout successful" });
 }
