@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Covalent Community</title>
+  <script>
+    // This script helps with SPA routing on Vercel
+    (function () {
+      const { pathname, hostname, protocol } = window.location;
+
+      // If a 404 page is loaded, redirect to the main app
+      if (pathname.startsWith('/_next/data/') && pathname.includes('/404')) {
+        window.location.pathname = '/';
+      }
+    })();
+  </script>
+</head>
+
+<body>
+  <!-- This file is used for handling client-side routing in production -->
+  <script>
+    window.location.href = '/';
+  </script>
+</body>
+
+</html>
