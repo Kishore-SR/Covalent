@@ -57,7 +57,7 @@ app.get("/api/health", (req, res) => {
   res.status(200).json({
     status: "ok",
     message: "Covalent API is running",
-     time: new Date().toISOString(), 
+    time: new Date().toISOString(),
     env: {
       JWT_SECRET_KEY: process.env.JWT_SECRET_KEY ? "EXISTS" : "MISSING",
       MONGODB_URI: process.env.MONGODB_URI ? "EXISTS" : "MISSING",
