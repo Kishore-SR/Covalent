@@ -5,6 +5,14 @@
       "destination": "/index.html"
     }
   ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "s-maxage=0" }
+      ]
+    }
+  ],
   "build": {
     "env": {
       "NODE_ENV": "production"
