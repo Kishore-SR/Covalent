@@ -16,7 +16,8 @@ import {
   useCallStateHooks,
 } from "@stream-io/video-react-sdk";
 
-import "@stream-io/video-react-sdk/dist/css/styles.css";
+// Only import our custom styles
+import "../styles/callPage.css";
 import toast from "react-hot-toast";
 import ChatLoader from "../components/ChatLoader";
 
@@ -73,14 +74,12 @@ const CallPage = () => {
 
     initCall();
   }, [tokenData, authUser, callId]);
-
   if (isLoading || isConnecting) return <ChatLoader />;
 
   return (
-    <div className="h-screen flex flex-col">
-      {" "}
+    <div className="h-screen w-full overflow-hidden">
       <Helmet>
-        <title>Video Call</title>
+        <title>Video Call | Covalent</title>
         <meta
           name="description"
           content="Connect face-to-face with your engineering peers on Covalent."
@@ -89,7 +88,7 @@ const CallPage = () => {
       {isLoading || !call ? (
         <ChatLoader />
       ) : (
-        <div className="relative">
+        <div className="absolute inset-0">
           {client && call ? (
             <StreamVideo client={client}>
               <StreamCall call={call}>

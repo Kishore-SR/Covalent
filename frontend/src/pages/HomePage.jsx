@@ -102,13 +102,10 @@ const HomePage = () => {
           <div className="mb-6 sm:mb-8">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               {" "}
-              <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
+              <h1 className="text-xl sm:text-3xl font-bold flex items-center gap-3 mb-4">
+                <UsersIcon className="text-primary h-6 w-6" />
                 Your Network
-              </h2>
-              {/* <Link to="/notifications" className="btn btn-outline btn-sm">
-                <UsersIcon className="mr-2 size-4" />
-                Friend Requests
-              </Link> */}
+              </h1>
             </div>
 
             {loadingFriends ? (

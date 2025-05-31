@@ -1,0 +1,29 @@
+/* Custom styling to fix username text color in Stream Video SDK */
+.str-video__participant-name {
+  color: white !important; /* Force white text for usernames */
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.8); /* Add shadow for better visibility on any background */
+  font-weight: 500;
+}
+
+/* Make sure the background area behind names is dark enough */
+.str-video__participant-bar {
+  background-color: rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Make video UI fill the available space */
+.str-video__container {
+  height: 100vh !important;
+  width: 100% !important;
+}
+
+/* Improve controls visibility */
+.str-video__call-controls {
+  background-color: rgba(0, 0, 0, 0.6) !important;
+  padding: 8px !important;
+}
+
+/* Ensure speaker layout uses all available space */
+.str-video__speaker-layout {
+  height: calc(100vh - 70px) !important;
+  width: 100% !important;
+}

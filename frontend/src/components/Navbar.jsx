@@ -30,7 +30,6 @@ const Navbar = () => {
     if (friendRequests) {
       const incomingCount = friendRequests.incomingReqs?.length || 0;
 
-      // Only count accepted requests that haven't been viewed yet
       const newAcceptedReqs =
         friendRequests.acceptedReqs?.filter(
           (req) => !viewedAcceptedIds.includes(req._id)
@@ -43,16 +42,13 @@ const Navbar = () => {
     }
   }, [friendRequests, isNotificationsPage, viewedAcceptedIds]);
 
-  // Handle navigation to notifications page
   useEffect(() => {
     if (isNotificationsPage && friendRequests) {
-      // Mark all current accepted requests as viewed
       const acceptedIds =
         friendRequests.acceptedReqs?.map((req) => req._id) || [];
       if (acceptedIds.length > 0) {
         setViewedAcceptedIds((prev) => [...prev, ...acceptedIds]);
       }
-      // Hide badge while on notifications page
       setShowNotificationBadge(false);
     }
   }, [isNotificationsPage, friendRequests]);
