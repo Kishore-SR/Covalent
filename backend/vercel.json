@@ -1,14 +1,21 @@
 {
   "version": 2,
   "functions": {
-    "src/server.js": {
+    "api/server.js": {
+      "memory": 1024,
       "maxDuration": 30
     }
   },
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "src/server.js"
+      "dest": "api/server.js"
     }
-  ]
+  ],
+  "env": {
+    "JWT_SECRET_KEY": "${JWT_SECRET_KEY}",
+    "MONGODB_URI": "${MONGODB_URI}",
+    "STREAM_API_KEY": "${STREAM_API_KEY}",
+    "STREAM_API_SECRET": "${STREAM_API_SECRET}"
+  }
 }
