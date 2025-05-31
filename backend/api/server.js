@@ -58,10 +58,10 @@ app.use(cookieParser());
 app.get("/", (req, res) => {
   const hasJwtSecret = !!process.env.JWT_SECRET_KEY;
   const hasMongoDB = !!process.env.MONGODB_URI;
-  
+
   // Get the first 10 characters of the MongoDB URI for debugging
-  const mongoURIPreview = process.env.MONGODB_URI 
-    ? `${process.env.MONGODB_URI.substring(0, 10)}...` 
+  const mongoURIPreview = process.env.MONGODB_URI
+    ? `${process.env.MONGODB_URI.substring(0, 10)}...`
     : "MISSING";
 
   // Perform basic validation on the MongoDB URI
@@ -70,9 +70,9 @@ app.get("/", (req, res) => {
     mongoURIStatus = "MISSING";
   } else {
     const uri = process.env.MONGODB_URI.trim();
-    if (uri.startsWith('mongodb://') || uri.startsWith('mongodb+srv://')) {
+    if (uri.startsWith("mongodb://") || uri.startsWith("mongodb+srv://")) {
       mongoURIStatus = "VALID_FORMAT";
-    } else if (uri.includes('mongodb.net')) {
+    } else if (uri.includes("mongodb.net")) {
       mongoURIStatus = "MISSING_PROTOCOL";
     } else if (uri.startsWith('"') || uri.startsWith("'")) {
       mongoURIStatus = "HAS_QUOTES";
@@ -100,16 +100,16 @@ app.get("/api/health", (req, res) => {
   // Perform basic validation on the MongoDB URI
   let mongoURIStatus = "UNKNOWN";
   let mongoURIPreview = "NONE";
-  
+
   if (!process.env.MONGODB_URI) {
     mongoURIStatus = "MISSING";
   } else {
     const uri = process.env.MONGODB_URI.trim();
     mongoURIPreview = `${uri.substring(0, 15)}...`;
-    
-    if (uri.startsWith('mongodb://') || uri.startsWith('mongodb+srv://')) {
+
+    if (uri.startsWith("mongodb://") || uri.startsWith("mongodb+srv://")) {
       mongoURIStatus = "VALID_FORMAT";
-    } else if (uri.includes('mongodb.net')) {
+    } else if (uri.includes("mongodb.net")) {
       mongoURIStatus = "MISSING_PROTOCOL";
     } else if (uri.startsWith('"') || uri.startsWith("'")) {
       mongoURIStatus = "HAS_QUOTES";
@@ -117,7 +117,7 @@ app.get("/api/health", (req, res) => {
       mongoURIStatus = "INVALID_FORMAT";
     }
   }
-  
+
   res.status(200).json({
     status: "ok",
     message: "Covalent API is running",
@@ -211,11 +211,12 @@ console.log("Environment variables:", {
   NODE_ENV: process.env.NODE_ENV,
   JWT_EXISTS: !!process.env.JWT_SECRET_KEY,
   STREAM_API_EXISTS: !!process.env.STREAM_API_KEY,
-  MONGODB_URI_FORMAT: process.env.MONGODB_URI 
-    ? (process.env.MONGODB_URI.startsWith('mongodb://') || process.env.MONGODB_URI.startsWith('mongodb+srv://'))
-      ? "VALID" 
-      : "INVALID" 
-    : "MISSING"
+  MONGODB_URI_FORMAT: process.env.MONGODB_URI
+    ? process.env.MONGODB_URI.startsWith("mongodb://") ||
+      process.env.MONGODB_URI.startsWith("mongodb+srv://")
+      ? "VALID"
+      : "INVALID"
+    : "MISSING",
 });
 
 // Attempt database connection with retry logic
@@ -224,20 +225,27 @@ let connected = false;
 
 while (retries > 0 && !connected) {
   try {
-    console.log(`⏳ Attempting to connect to MongoDB (${retries} retries left)...`);
+    console.log(
+      `⏳ Attempting to connect to MongoDB (${retries} retries left)...`
+    );
     await connectDB();
     console.log("✅ Database connected successfully");
     connected = true;
   } catch (error) {
-    console.error(`❌ Failed to connect to database (attempt ${4-retries}/3):`, error.message);
+    console.error(
+      `❌ Failed to connect to database (attempt ${4 - retries}/3):`,
+      error.message
+    );
     retries--;
-    
+
     if (retries > 0) {
       // Wait for a short period before retrying
       console.log("⏳ Waiting 1 second before retrying...");
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
     } else {
-      console.error("❌ All database connection attempts failed. API will continue but database-dependent features will not work.");
+      console.error(
+        "❌ All database connection attempts failed. API will continue but database-dependent features will not work."
+      );
     }
   }
 }

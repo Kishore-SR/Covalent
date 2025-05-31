@@ -22,6 +22,7 @@ npm run setup-vercel
 ```
 
 This script will:
+
 - Validate and format your MongoDB URI
 - Generate a secure JWT secret key (or use an existing one)
 - Configure your GetStream API credentials
@@ -66,11 +67,13 @@ https://your-app.vercel.app/api/health
 If you're experiencing MongoDB connection issues:
 
 1. Run the MongoDB connection test:
+
    ```bash
    npm run test-db
    ```
 
 2. Check that your MongoDB URI is correctly formatted:
+
    - Must start with `mongodb://` or `mongodb+srv://`
    - Should not be wrapped in quotes
    - Make sure the username and password are URL-encoded
