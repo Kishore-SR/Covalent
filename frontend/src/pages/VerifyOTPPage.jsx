@@ -80,8 +80,9 @@ const VerifyOTPPage = () => {
   const { theme } = useThemeStore();
   return (
     <div className="flex h-screen">
+      {" "}
       <Helmet>
-        <title>Verify Account | Covalent</title>
+        <title>Verify Account</title>
         <meta
           name="description"
           content="Verify your account to join the Covalent engineering community."

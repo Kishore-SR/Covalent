@@ -31,8 +31,9 @@ const NotificationsPage = () => {
   const acceptedRequests = friendRequests?.acceptedReqs || [];
   return (
     <div className="p-4 sm:p-6 h-full bg-base-100">
+      {" "}
       <Helmet>
-        <title>Notifications | Covalent</title>
+        <title>Notifications</title>
         <meta
           name="description"
           content="Stay updated with your Covalent connections and activities."

@@ -97,8 +97,9 @@ const ChatPage = () => {
 
   return (
     <div className="h-[90vh]">
+      {" "}
       <Helmet>
-        <title>Chat | Covalent</title>
+        <title>Chat</title>
         <meta
           name="description"
           content="Chat with your engineering connections on Covalent."

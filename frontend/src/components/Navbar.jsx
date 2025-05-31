@@ -15,7 +15,8 @@ const Navbar = () => {
   const [showNotificationBadge, setShowNotificationBadge] = useState(false);
   const [notificationCount, setNotificationCount] = useState(0);
 
-  const { logoutMutation } = useLogout();
+  // Get logout state with isPending to show loading indicator
+  const { logoutMutation, isPending: isLoggingOut } = useLogout();
 
   // Fetch notifications
   const { data: friendRequests } = useQuery({
@@ -97,10 +98,15 @@ const Navbar = () => {
             <ThemeSelector />
 
             <button
-              className="btn btn-ghost btn-circle"
+              className="btn btn-ghost btn-circle relative"
               onClick={logoutMutation}
+              disabled={isLoggingOut}
             >
-              <LogOutIcon className="h-6 w-6 text-base-content opacity-70" />
+              {isLoggingOut ? (
+                <span className="loading loading-spinner loading-xs"></span>
+              ) : (
+                <LogOutIcon className="h-6 w-6 text-base-content opacity-70" />
+              )}
             </button>
           </div>
         </div>
@@ -134,10 +140,15 @@ const Navbar = () => {
             <ThemeSelector />
 
             <button
-              className="btn btn-ghost btn-circle"
+              className="btn btn-ghost btn-circle relative"
               onClick={logoutMutation}
+              disabled={isLoggingOut}
             >
-              <LogOutIcon className="h-6 w-6 text-base-content opacity-70" />
+              {isLoggingOut ? (
+                <span className="loading loading-spinner loading-xs"></span>
+              ) : (
+                <LogOutIcon className="h-6 w-6 text-base-content opacity-70" />
+              )}
             </button>
           </div>
         </div>

@@ -53,8 +53,9 @@ const OnboardingPage = () => {
 
   return (
     <div className="min-h-screen bg-base-100 p-4 sm:p-6 lg:p-8">
+      {" "}
       <Helmet>
-        <title>Complete Profile | Covalent</title>
+        <title>Complete Profile</title>
         <meta
           name="description"
           content="Complete your engineering profile on Covalent to connect with like-minded peers."

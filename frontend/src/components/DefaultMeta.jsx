@@ -2,7 +2,7 @@ import { Helmet } from "react-helmet-async";
 
 const DefaultMeta = () => {
   return (
-    <Helmet defaultTitle="Covalent Community" titleTemplate="%s | Covalent">
+    <Helmet defaultTitle="Covalent Community" titleTemplate="%s">
       <meta
         name="description"
         content="Where engineering students connect anonymously and build strong bonds through passion and purpose."

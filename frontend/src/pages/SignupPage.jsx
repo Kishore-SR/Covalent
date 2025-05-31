@@ -132,8 +132,9 @@ const SignUpPage = () => {
   const { theme } = useThemeStore();
   return (
     <div className="flex h-screen">
+      {" "}
       <Helmet>
-        <title>Signup | Covalent</title>
+        <title>Signup</title>
         <meta
           name="description"
           content="Join Covalent - Where engineering students connect anonymously and build strong bonds through passion and purpose."

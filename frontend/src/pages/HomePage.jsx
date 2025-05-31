@@ -98,50 +98,54 @@ const HomePage = () => {
         />
       </Helmet>
       <div className="container mx-auto space-y-10">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          {" "}
-          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
-            Your Network
-          </h2>
-          {/* <Link to="/notifications" className="btn btn-outline btn-sm">
-            <UsersIcon className="mr-2 size-4" />
-            Friend Requests
-          </Link> */}
-        </div>
+        <section className="mb-12 overflow-hidden">
+          <div className="mb-6 sm:mb-8">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              {" "}
+              <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
+                Your Network
+              </h2>
+              {/* <Link to="/notifications" className="btn btn-outline btn-sm">
+                <UsersIcon className="mr-2 size-4" />
+                Friend Requests
+              </Link> */}
+            </div>
 
-        {loadingFriends ? (
-          <div className="flex justify-center py-12">
-            <span className="loading loading-spinner loading-lg" />
-          </div>
-        ) : friends.length === 0 ? (
-          <NoFriendsFound />
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {friends.map((friend) => (
-              <div
-                key={friend._id}
-                className="card bg-base-200 hover:shadow-lg transition-all duration-300 group relative"
-              >
-                {friend.bio && (
-                  <div className="dropdown dropdown-hover dropdown-end absolute right-2 top-2 z-10">
-                    <label
-                      tabIndex={0}
-                      className="btn btn-ghost btn-xs btn-circle text-base-content/70 hover:text-base-content"
-                    >
-                      <InfoIcon className="size-4" />
-                    </label>{" "}
-                    <div className="dropdown-content z-[1] card card-compact w-60 shadow-lg bg-base-100 text-base-content border-2 border-primary/20">
-                      <div className="card-body">
-                        <p className="text-sm">{friend.bio}</p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-                <FriendCard friend={friend} />
+            {loadingFriends ? (
+              <div className="flex justify-center py-12">
+                <span className="loading loading-spinner loading-lg" />
               </div>
-            ))}
+            ) : friends.length === 0 ? (
+              <NoFriendsFound />
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 max-w-full overflow-x-hidden">
+                {friends.map((friend) => (
+                  <div
+                    key={friend._id}
+                    className="card bg-base-200 hover:shadow-lg transition-all duration-300 group relative w-full sm:w-auto max-w-[95%] sm:max-w-full mx-auto sm:mx-0"
+                  >
+                    {friend.bio && (
+                      <div className="dropdown dropdown-hover dropdown-end absolute right-2 top-2 z-10">
+                        <label
+                          tabIndex={0}
+                          className="btn btn-ghost btn-xs btn-circle text-base-content/70 hover:text-base-content"
+                        >
+                          <InfoIcon className="size-4" />
+                        </label>{" "}
+                        <div className="dropdown-content z-[1] card card-compact w-60 shadow-lg bg-base-100 text-base-content border-2 border-primary/20">
+                          <div className="card-body">
+                            <p className="text-sm">{friend.bio}</p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    <FriendCard friend={friend} />
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
-        )}
+        </section>
 
         <section>
           <div className="mb-6 sm:mb-8">

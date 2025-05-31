@@ -111,7 +111,7 @@ const FriendsPage = () => {
   return (
     <div className="p-4 sm:p-6 lg:p-8 bg-base-100 min-h-screen">
       <Helmet>
-        <title>Friends | Covalent</title>
+        <title>Friends</title>
         <meta
           name="description"
           content="Connect with your engineering friends on Covalent."
@@ -189,88 +189,100 @@ const FriendsPage = () => {
           <div className="flex justify-center py-12">
             <span className="loading loading-spinner loading-lg" />
           </div>
-        ) : filteredFriends.length === 0 ? (
-          <div className="text-center py-16 bg-base-200 rounded-xl shadow-inner">
-            <UserX2Icon className="mx-auto h-16 w-16 text-base-content/30" />
-            <h3 className="mt-4 text-xl font-semibold">No friends found</h3>
-            <p className="mt-2 text-base-content/70">
-              {searchTerm || selectedLanguage !== "all"
-                ? "Try changing your search or filter settings"
-                : "Connect with like-minded learners to see them here"}
-            </p>
-          </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {filteredFriends.map((friend) => (
-              <div
-                key={friend._id}
-                className="flex bg-base-200 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow border-l-4 border-primary"
-              >
-                {/* Profile Picture Column */}
-                <div className="w-1/3 bg-gradient-to-br from-primary/20 to-secondary/20 p-6 flex items-center justify-center">
-                  <div className="avatar">
-                    <div className="w-24 h-24 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-                      <img
-                        src={friend.profilePic}
-                        alt={friend.username}
-                        className="object-cover"
-                      />
-                    </div>
-                  </div>
+          <div className="mt-8 overflow-hidden">
+            {filteredFriends.length === 0 ? (
+              <div className="py-12 text-center">
+                <div className="inline-flex justify-center items-center w-20 h-20 rounded-full bg-base-300 mb-4">
+                  <UserX2Icon className="h-10 w-10 text-base-content opacity-50" />
                 </div>
-                {/* Content Column */}
-                <div className="w-2/3 p-6">
-                  <div className="flex flex-col h-full justify-between">
-                    {/* User Info */}
-                    <div>
-                      <h3 className="text-xl font-bold">@{friend.username}</h3>
-                      {friend.bio && (
-                        <div className="mt-2 mb-3 bg-base-100 rounded-lg p-2 border-l-2 border-secondary">
-                          <p className="text-sm italic opacity-80">
-                            "{friend.bio}"
-                          </p>
-                        </div>
-                      )}{" "}
-                      <div className="flex flex-wrap gap-3 mt-3 mb-4">
-                        <div className="flex items-center text-sm">
-                          <span className="mr-1 text-opacity-70">Focus:</span>
-                          {getLanguageFlag(friend.currentFocus)}
-                          <span className="font-medium">
-                            {friend.currentFocus}
-                          </span>
-                        </div>
-                        <span className="text-xs opacity-50">•</span>
-                        <div className="flex items-center text-sm">
-                          <span className="mr-1 text-opacity-70">Track:</span>
-                          {getLanguageFlag(friend.skillTrack)}
-                          <span className="font-medium">
-                            {friend.skillTrack}
-                          </span>
+                <h3 className="text-xl font-bold">No friends found</h3>
+                <p className="text-base-content/70 mt-2">
+                  {searchTerm || selectedLanguage !== "all"
+                    ? "Try changing your search or filter criteria"
+                    : "Start connecting with other users to build your network"}
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 max-w-full">
+                {filteredFriends.map((friend) => (
+                  <div
+                    key={friend._id}
+                    className="card bg-base-200 shadow-md hover:shadow-lg transition-all duration-300 w-full max-w-[95%] sm:max-w-full mx-auto sm:mx-0"
+                  >
+                    {/* Profile Picture Column */}
+                    <div className="w-1/3 bg-gradient-to-br from-primary/20 to-secondary/20 p-6 flex items-center justify-center">
+                      <div className="avatar">
+                        <div className="w-24 h-24 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+                          <img
+                            src={friend.profilePic}
+                            alt={friend.username}
+                            className="object-cover"
+                          />
                         </div>
                       </div>
                     </div>
-                    {/* Action Buttons */}
-                    <div className="flex gap-8">
-                      <Link
-                        to={`/chat/${friend._id}`}
-                        className="btn btn-primary btn-sm flex-1"
-                      >
-                        <MessageSquareIcon className="h-4 w-4 mr-2" />
-                        Chat
-                      </Link>
-                      {/* Updated video call button */}
-                      <button
-                        onClick={() => handleVideoCall(friend)}
-                        className="btn btn-outline btn-sm flex-1"
-                      >
-                        <VideoIcon className="h-4 w-4 mr-2" />
-                        Call
-                      </button>
+                    {/* Content Column */}
+                    <div className="w-2/3 p-6">
+                      <div className="flex flex-col h-full justify-between">
+                        {/* User Info */}
+                        <div>
+                          <h3 className="text-xl font-bold">
+                            @{friend.username}
+                          </h3>
+                          {friend.bio && (
+                            <div className="mt-2 mb-3 bg-base-100 rounded-lg p-2 border-l-2 border-secondary">
+                              <p className="text-sm italic opacity-80">
+                                "{friend.bio}"
+                              </p>
+                            </div>
+                          )}{" "}
+                          <div className="flex flex-wrap gap-3 mt-3 mb-4">
+                            <div className="flex items-center text-sm">
+                              <span className="mr-1 text-opacity-70">
+                                Focus:
+                              </span>
+                              {getLanguageFlag(friend.currentFocus)}
+                              <span className="font-medium">
+                                {friend.currentFocus}
+                              </span>
+                            </div>
+                            <span className="text-xs opacity-50">•</span>
+                            <div className="flex items-center text-sm">
+                              <span className="mr-1 text-opacity-70">
+                                Track:
+                              </span>
+                              {getLanguageFlag(friend.skillTrack)}
+                              <span className="font-medium">
+                                {friend.skillTrack}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        {/* Action Buttons */}
+                        <div className="flex gap-8">
+                          <Link
+                            to={`/chat/${friend._id}`}
+                            className="btn btn-primary btn-sm flex-1"
+                          >
+                            <MessageSquareIcon className="h-4 w-4 mr-2" />
+                            Chat
+                          </Link>
+                          {/* Updated video call button */}
+                          <button
+                            onClick={() => handleVideoCall(friend)}
+                            className="btn btn-outline btn-sm flex-1"
+                          >
+                            <VideoIcon className="h-4 w-4 mr-2" />
+                            Call
+                          </button>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
+                ))}
               </div>
-            ))}
+            )}
           </div>
         )}
       </div>

@@ -78,8 +78,9 @@ const CallPage = () => {
 
   return (
     <div className="h-screen flex flex-col">
+      {" "}
       <Helmet>
-        <title>Video Call | Covalent</title>
+        <title>Video Call</title>
         <meta
           name="description"
           content="Connect face-to-face with your engineering peers on Covalent."
