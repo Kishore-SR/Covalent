@@ -5,6 +5,7 @@ import { connectDB } from "../src/lib/db.js";
 import cookieParser from "cookie-parser";
 import userRoutes from "../src/routes/user.route.js";
 import chatRoutes from "../src/routes/chat.route.js";
+import debugRouter from "./debug.js";
 import cors from "cors";
 import path from "path";
 
@@ -138,6 +139,7 @@ app.get("/api/health", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/chat", chatRoutes);
+app.use("/api/debug", debugRouter);
 
 // Global error handling middleware
 app.use((error, req, res, next) => {
