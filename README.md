@@ -1,6 +1,5 @@
-<!-- Poster at Top -->
 <p align="center">
-  <img src="https://i.ibb.co/4nVMYdGf/Covalent-Poster.png" alt="Covalent Poster" width="100%" />
+  <img src="https://i.postimg.cc/vmR67y3k/Covalent-Poster.png" alt="Covalent Poster" width="100%" />
 </p>
 
 <p align="center">A community app for students to connect, chat and collaborate based on skills, focus areas and learning goals.</p>
@@ -44,13 +43,12 @@
 - 🧑‍🤝‍🧑 Friend request system to connect with like-minded peers
 - 🔔 Notification badge for new requests and approvals
 - 💬 Real-time 1:1 chat and video call (powered by Stream)
-- 🌐 "Covalent Community" to explore all platform users
 - 🎨 Theme selector with 15+ DaisyUI themes
 
 ### 🎨 Themes Preview
 
 <p align="center">
-  <img src="https://i.ibb.co/20nnQcJ5/covalent-themes.png" alt="Theme Previews" width="100%" />
+  <img src="https://i.postimg.cc/KcQL6d83/covalent-themes.png" alt="Theme Previews" width="100%" />
 </p>
 
 ### Connect Here
