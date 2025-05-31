@@ -57,6 +57,29 @@ app.use(cookieParser());
 // Health check endpoints
 app.get("/", (req, res) => {
   const hasJwtSecret = !!process.env.JWT_SECRET_KEY;
+  const hasMongoDB = !!process.env.MONGODB_URI;
+  
+  // Get the first 10 characters of the MongoDB URI for debugging
+  const mongoURIPreview = process.env.MONGODB_URI 
+    ? `${process.env.MONGODB_URI.substring(0, 10)}...` 
+    : "MISSING";
+
+  // Perform basic validation on the MongoDB URI
+  let mongoURIStatus = "UNKNOWN";
+  if (!process.env.MONGODB_URI) {
+    mongoURIStatus = "MISSING";
+  } else {
+    const uri = process.env.MONGODB_URI.trim();
+    if (uri.startsWith('mongodb://') || uri.startsWith('mongodb+srv://')) {
+      mongoURIStatus = "VALID_FORMAT";
+    } else if (uri.includes('mongodb.net')) {
+      mongoURIStatus = "MISSING_PROTOCOL";
+    } else if (uri.startsWith('"') || uri.startsWith("'")) {
+      mongoURIStatus = "HAS_QUOTES";
+    } else {
+      mongoURIStatus = "INVALID_FORMAT";
+    }
+  }
 
   res.status(200).json({
     message: "Covalent API is running successfully!",
@@ -65,12 +88,36 @@ app.get("/", (req, res) => {
     timestamp: new Date().toISOString(),
     env: {
       JWT_SECRET_KEY: hasJwtSecret ? "EXISTS" : "MISSING",
+      MONGODB_URI: hasMongoDB ? "EXISTS" : "MISSING",
+      MONGODB_URI_PREVIEW: mongoURIPreview,
+      MONGODB_URI_STATUS: mongoURIStatus,
       NODE_ENV: process.env.NODE_ENV || "development",
     },
   });
 });
 
 app.get("/api/health", (req, res) => {
+  // Perform basic validation on the MongoDB URI
+  let mongoURIStatus = "UNKNOWN";
+  let mongoURIPreview = "NONE";
+  
+  if (!process.env.MONGODB_URI) {
+    mongoURIStatus = "MISSING";
+  } else {
+    const uri = process.env.MONGODB_URI.trim();
+    mongoURIPreview = `${uri.substring(0, 15)}...`;
+    
+    if (uri.startsWith('mongodb://') || uri.startsWith('mongodb+srv://')) {
+      mongoURIStatus = "VALID_FORMAT";
+    } else if (uri.includes('mongodb.net')) {
+      mongoURIStatus = "MISSING_PROTOCOL";
+    } else if (uri.startsWith('"') || uri.startsWith("'")) {
+      mongoURIStatus = "HAS_QUOTES";
+    } else {
+      mongoURIStatus = "INVALID_FORMAT";
+    }
+  }
+  
   res.status(200).json({
     status: "ok",
     message: "Covalent API is running",
@@ -78,6 +125,8 @@ app.get("/api/health", (req, res) => {
     env: {
       JWT_SECRET_KEY: process.env.JWT_SECRET_KEY ? "EXISTS" : "MISSING",
       MONGODB_URI: process.env.MONGODB_URI ? "EXISTS" : "MISSING",
+      MONGODB_URI_STATUS: mongoURIStatus,
+      MONGODB_URI_PREVIEW: mongoURIPreview,
       STREAM_API_KEY: process.env.STREAM_API_KEY ? "EXISTS" : "MISSING",
       STREAM_API_SECRET: process.env.STREAM_API_SECRET ? "EXISTS" : "MISSING",
       NODE_ENV: process.env.NODE_ENV || "development",
@@ -157,13 +206,41 @@ app.use("*", (req, res) => {
 });
 
 // Connect to database
-connectDB()
-  .then(() => {
+console.log("MongoDB URI exists:", !!process.env.MONGODB_URI);
+console.log("Environment variables:", {
+  NODE_ENV: process.env.NODE_ENV,
+  JWT_EXISTS: !!process.env.JWT_SECRET_KEY,
+  STREAM_API_EXISTS: !!process.env.STREAM_API_KEY,
+  MONGODB_URI_FORMAT: process.env.MONGODB_URI 
+    ? (process.env.MONGODB_URI.startsWith('mongodb://') || process.env.MONGODB_URI.startsWith('mongodb+srv://'))
+      ? "VALID" 
+      : "INVALID" 
+    : "MISSING"
+});
+
+// Attempt database connection with retry logic
+let retries = 3;
+let connected = false;
+
+while (retries > 0 && !connected) {
+  try {
+    console.log(`⏳ Attempting to connect to MongoDB (${retries} retries left)...`);
+    await connectDB();
     console.log("✅ Database connected successfully");
-  })
-  .catch((error) => {
-    console.error("❌ Failed to connect to database:", error);
-  });
+    connected = true;
+  } catch (error) {
+    console.error(`❌ Failed to connect to database (attempt ${4-retries}/3):`, error.message);
+    retries--;
+    
+    if (retries > 0) {
+      // Wait for a short period before retrying
+      console.log("⏳ Waiting 1 second before retrying...");
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    } else {
+      console.error("❌ All database connection attempts failed. API will continue but database-dependent features will not work.");
+    }
+  }
+}
 
 // Handle uncaught exceptions
 process.on("uncaughtException", (error) => {

@@ -7,7 +7,10 @@
   "scripts": {
     "dev": "nodemon src/server.js",
     "start": "node api/server.js",
-    "vercel-build": "echo Building Vercel serverless function"
+    "vercel-build": "echo Building Vercel serverless function",
+    "validate-env": "node scripts/fix-env.js",
+    "test-db": "node scripts/test-mongo-connection.js",
+    "setup-vercel": "node scripts/setup-vercel-env.js"
   },
   "keywords": [],
   "author": "",
