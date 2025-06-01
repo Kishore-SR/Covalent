@@ -27,6 +27,8 @@ const HomePage = () => {
   const queryClient = useQueryClient();
   const [outgoingRequestsIds, setOutgoingRequestsIds] = useState(new Set());
   const [incomingRequestsMap, setIncomingRequestsMap] = useState(new Map());
+  const [sendingRequestIds, setSendingRequestIds] = useState(new Set());
+  const [acceptingRequestIds, setAcceptingRequestIds] = useState(new Set());
 
   const { data: friends = [], isLoading: loadingFriends } = useQuery({
     queryKey: ["friends"],
@@ -47,24 +49,91 @@ const HomePage = () => {
     queryKey: ["friendRequests"],
     queryFn: getFriendRequests,
   });
+  const { mutate: sendRequestMutation } = useMutation({
+    mutationFn: (userId) => {
+      // Add the userId to the set of sending request IDs
+      setSendingRequestIds((prev) => {
+        const newSet = new Set(prev);
+        newSet.add(userId);
+        return newSet;
+      });
+      return sendFriendRequest(userId);
+    },
+    onSuccess: (_, userId) => {
+      // Update the outgoing requests set
+      setOutgoingRequestsIds((prev) => {
+        const newSet = new Set(prev);
+        newSet.add(userId);
+        return newSet;
+      });
+      // Remove from sending set
+      setSendingRequestIds((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(userId);
+        return newSet;
+      });
+      // Then invalidate the query for background refresh
+      queryClient.invalidateQueries({ queryKey: ["outgoingFriendReqs"] });
+    },
+    onError: (_, userId) => {
+      // Remove from sending set if there's an error
+      setSendingRequestIds((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(userId);
+        return newSet;
+      });
+    },
+  });
+  const { mutate: acceptRequestMutation } = useMutation({
+    mutationFn: (requestId) => {
+      // Add the requestId to the set of accepting request IDs
+      setAcceptingRequestIds((prev) => {
+        const newSet = new Set(prev);
+        newSet.add(requestId);
+        return newSet;
+      });
+      return acceptFriendRequest(requestId);
+    },
+    onSuccess: (_, requestId) => {
+      // Find the userId associated with this requestId
+      let userIdToRemove = null;
+      for (const [userId, reqId] of incomingRequestsMap.entries()) {
+        if (reqId === requestId) {
+          userIdToRemove = userId;
+          break;
+        }
+      }
 
-  const { mutate: sendRequestMutation, isPending: sendingRequest } =
-    useMutation({
-      mutationFn: sendFriendRequest,
-      onSuccess: () =>
-        queryClient.invalidateQueries({ queryKey: ["outgoingFriendReqs"] }),
-    });
+      // Update the local state
+      if (userIdToRemove) {
+        setIncomingRequestsMap((prev) => {
+          const newMap = new Map(prev);
+          newMap.delete(userIdToRemove);
+          return newMap;
+        });
+      }
 
-  const { mutate: acceptRequestMutation, isPending: acceptingRequest } =
-    useMutation({
-      mutationFn: acceptFriendRequest,
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["friendRequests"] });
-        queryClient.invalidateQueries({ queryKey: ["friends"] });
-        queryClient.invalidateQueries({ queryKey: ["users"] });
-      },
-    });
+      // Remove from accepting set
+      setAcceptingRequestIds((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(requestId);
+        return newSet;
+      });
 
+      // Then invalidate queries for background refresh
+      queryClient.invalidateQueries({ queryKey: ["friendRequests"] });
+      queryClient.invalidateQueries({ queryKey: ["friends"] });
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+    },
+    onError: (_, requestId) => {
+      // Remove from accepting set if there's an error
+      setAcceptingRequestIds((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(requestId);
+        return newSet;
+      });
+    },
+  });
   useEffect(() => {
     const outgoingIds = new Set();
     if (outgoingFriendReqs && outgoingFriendReqs.length > 0) {
@@ -222,7 +291,7 @@ const HomePage = () => {
                             {user.bio}
                           </p>
                         </div>
-                      )}
+                      )}{" "}
                       {/* Action button */}
                       {hasIncomingRequest ? (
                         <button
@@ -230,18 +299,23 @@ const HomePage = () => {
                           onClick={() =>
                             acceptRequestMutation(incomingRequestId)
                           }
-                          disabled={acceptingRequest}
+                          disabled={acceptingRequestIds.has(incomingRequestId)}
                         >
                           <UserCheckIcon className="size-4 mr-2" />
-                          Accept Request
+                          {acceptingRequestIds.has(incomingRequestId)
+                            ? "Accepting..."
+                            : "Accept Request"}
                         </button>
                       ) : (
                         <button
                           className={`btn w-full mt-2 ${
                             hasRequestBeenSent ? "btn-disabled" : "btn-primary"
-                          } `}
+                          }`}
                           onClick={() => sendRequestMutation(user._id)}
-                          disabled={hasRequestBeenSent || sendingRequest}
+                          disabled={
+                            hasRequestBeenSent ||
+                            sendingRequestIds.has(user._id)
+                          }
                         >
                           {hasRequestBeenSent ? (
                             <>
@@ -251,7 +325,9 @@ const HomePage = () => {
                           ) : (
                             <>
                               <UserPlusIcon className="size-4 mr-2" />
-                              Send Friend Request
+                              {sendingRequestIds.has(user._id)
+                                ? "Sending..."
+                                : "Send Friend Request"}
                             </>
                           )}
                         </button>

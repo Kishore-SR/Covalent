@@ -18,6 +18,7 @@ const SignUpPage = () => {
   });
 
   const [isLoading, setIsLoading] = useState(false);
+  const [isRotating, setIsRotating] = useState(false);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   // Function to generate a random username
@@ -66,15 +67,20 @@ const SignUpPage = () => {
 
     initUsername();
   }, []);
-
   // Function to regenerate username
   const handleRegenerateUsername = async () => {
     try {
+      setIsRotating(true);
       const newUsername = await generateUniqueUsername();
       setSignupData((prev) => ({ ...prev, username: newUsername }));
       toast.success("New unique username generated!");
     } catch (error) {
       toast.error("Failed to generate a unique username. Please try again.");
+    } finally {
+      // Add a slight delay before stopping the rotation for a smoother effect
+      setTimeout(() => {
+        setIsRotating(false);
+      }, 500);
     }
   };
 
@@ -102,9 +108,15 @@ const SignUpPage = () => {
   };
 
   const { isPending, error, signupMutation } = useSignUp();
-
   const handleSignup = async (e) => {
     e.preventDefault();
+
+    // Validate password length before sending request
+    if (signupData.password.length < 6) {
+      toast.error("Password must be at least 6 characters long");
+      return;
+    }
+
     setIsLoading(true);
 
     try {
@@ -122,9 +134,18 @@ const SignUpPage = () => {
       await sendOTP(signupData.email, otp);
       navigate("/verify-otp");
     } catch (err) {
-      toast.error(
-        err?.response?.data?.message || err.message || "Signup failed"
-      );
+      // Only show one toast for any error
+      const errorMessage =
+        err?.response?.data?.message || err.message || "Signup failed";
+
+      // Check for common errors and format message
+      if (errorMessage.includes("E11000") && errorMessage.includes("email")) {
+        toast.error(
+          "Email already exists. Please use a different email address."
+        );
+      } else {
+        toast.error(errorMessage);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -134,7 +155,7 @@ const SignUpPage = () => {
     <div className="flex h-screen">
       {" "}
       <Helmet>
-        <title>Signup</title>
+        <title>Signup | Covalent</title>
         <meta
           name="description"
           content="Join Covalent - Where engineering students connect anonymously and build strong bonds through passion and purpose."
@@ -175,18 +196,20 @@ const SignUpPage = () => {
                           value={signupData.username || "Generating..."}
                           readOnly
                           required
-                        />
+                        />{" "}
                         <button
                           type="button"
                           className="btn btn-square btn-outline"
                           onClick={handleRegenerateUsername}
                           title="Generate new username"
-                          disabled={!signupData.username}
+                          disabled={!signupData.username || isRotating}
                         >
                           <RefreshCw
                             className={`h-5 w-5 ${
-                              !signupData.username ? "animate-spin" : ""
-                            }`}
+                              !signupData.username || isRotating
+                                ? "animate-spin"
+                                : ""
+                            } transition-all duration-300`}
                           />
                         </button>
                       </div>{" "}

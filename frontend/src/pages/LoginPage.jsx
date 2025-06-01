@@ -25,7 +25,7 @@ const LoginPage = () => {
       data-theme={theme}
     >
       <Helmet>
-        <title>Login</title>
+        <title>Login | Covalent</title>
         <meta
           name="description"
           content="Log in to Covalent - Where engineering students connect anonymously and build strong bonds through passion and purpose."
