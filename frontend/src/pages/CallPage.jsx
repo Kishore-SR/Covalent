@@ -36,18 +36,23 @@ const CallPage = () => {
     queryFn: getStreamToken,
     enabled: !!authUser,
   });
-
   useEffect(() => {
     const initCall = async () => {
-      if (!tokenData.token || !authUser || !callId) return;
+      if (!tokenData?.token || !authUser || !callId) return;
 
       try {
         console.log("Initializing Stream video client...");
 
+        // Ensure the user object has valid data
+        if (!authUser._id || !authUser.username) {
+          toast.error("User data is invalid. Please try logging in again.");
+          return;
+        }
+
         const user = {
           id: authUser._id,
           name: authUser.username,
-          image: authUser.profilePic,
+          image: authUser.profilePic || "",
         };
 
         const videoClient = new StreamVideoClient({

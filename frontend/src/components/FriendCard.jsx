@@ -2,6 +2,11 @@ import { Link } from "react-router";
 import { MessageSquareIcon } from "lucide-react";
 
 const FriendCard = ({ friend }) => {
+  // Add a null check to prevent errors with deleted users
+  if (!friend || !friend._id || !friend.username || !friend.profilePic) {
+    return null;
+  }
+
   return (
     <div className="card border border-primary/25 bg-base-100 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
       <div className="card-body p-4">
@@ -18,12 +23,12 @@ const FriendCard = ({ friend }) => {
         </div>{" "}
         <div className="flex flex-wrap gap-1.5 mb-3">
           <span className="badge badge-secondary text-xs">
-            {getLanguageFlag(friend.currentFocus)}
-            Current Focus: {friend.currentFocus}
+            {getLanguageFlag(friend.currentFocus || "Unknown")}
+            Current Focus: {friend.currentFocus || "Unknown"}
           </span>
           <span className="badge badge-outline text-xs">
-            {getLanguageFlag(friend.skillTrack)}
-            Skill Track: {friend.skillTrack}
+            {getLanguageFlag(friend.skillTrack || "Unknown")}
+            Skill Track: {friend.skillTrack || "Unknown"}
           </span>
         </div>
         <Link to={`/chat/${friend._id}`} className="btn btn-success btn-sm">

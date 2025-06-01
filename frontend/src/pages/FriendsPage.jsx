@@ -37,27 +37,43 @@ const FriendsPage = () => {
     queryFn: getStreamToken,
     enabled: !!authUser,
   });
-
   const filteredFriends = friends.filter((friend) => {
+    // First filter out any null or invalid friend objects
+    if (
+      !friend ||
+      !friend._id ||
+      !friend.username ||
+      !friend.currentFocus ||
+      !friend.skillTrack
+    ) {
+      return false;
+    }
+
     const matchesSearch = friend.username
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
     const matchesLanguage =
       selectedLanguage === "all" ||
-      friend.currentFocus.toLowerCase() === selectedLanguage.toLowerCase() ||
-      friend.skillTrack.toLowerCase() === selectedLanguage.toLowerCase();
+      friend.currentFocus?.toLowerCase() === selectedLanguage.toLowerCase() ||
+      friend.skillTrack?.toLowerCase() === selectedLanguage.toLowerCase();
 
     return matchesSearch && matchesLanguage;
   });
   const languages = [
     ...new Set(
-      friends.flatMap((friend) =>
-        [friend.currentFocus, friend.skillTrack].filter(Boolean)
-      )
+      friends
+        .filter((friend) => friend && friend._id)
+        .flatMap((friend) =>
+          [friend.currentFocus, friend.skillTrack].filter(Boolean)
+        )
     ),
   ];
-
   const handleVideoCall = async (friend) => {
+    if (!friend || !friend._id || !friend.username) {
+      toast.error("Cannot start call with invalid user");
+      return;
+    }
+
     if (!authUser || !tokenData?.token) {
       toast.error("You need to be logged in to start a call");
       return;

@@ -138,12 +138,14 @@ const HomePage = () => {
     const outgoingIds = new Set();
     if (outgoingFriendReqs && outgoingFriendReqs.length > 0) {
       outgoingFriendReqs.forEach((req) => {
-        outgoingIds.add(req.recipient._id);
+        // Add null check to prevent errors with deleted users
+        if (req && req.recipient && req.recipient._id) {
+          outgoingIds.add(req.recipient._id);
+        }
       });
       setOutgoingRequestsIds(outgoingIds);
     }
   }, [outgoingFriendReqs]);
-
   useEffect(() => {
     const incomingReqsMap = new Map();
     if (
@@ -151,7 +153,10 @@ const HomePage = () => {
       friendRequests.incomingReqs.length > 0
     ) {
       friendRequests.incomingReqs.forEach((req) => {
-        incomingReqsMap.set(req.sender._id, req._id);
+        // Add null check to prevent errors with deleted users
+        if (req && req.sender && req.sender._id && req._id) {
+          incomingReqsMap.set(req.sender._id, req._id);
+        }
       });
     }
     setIncomingRequestsMap(incomingReqsMap);
@@ -185,29 +190,37 @@ const HomePage = () => {
               <NoFriendsFound />
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 max-w-full overflow-x-hidden">
-                {friends.map((friend) => (
-                  <div
-                    key={friend._id}
-                    className="card bg-base-200 hover:shadow-lg transition-all duration-300 group relative w-full sm:w-auto max-w-[95%] sm:max-w-full mx-auto sm:mx-0"
-                  >
-                    {friend.bio && (
-                      <div className="dropdown dropdown-hover dropdown-end absolute right-2 top-2 z-10">
-                        <label
-                          tabIndex={0}
-                          className="btn btn-ghost btn-xs btn-circle text-base-content/70 hover:text-base-content"
-                        >
-                          <InfoIcon className="size-4" />
-                        </label>{" "}
-                        <div className="dropdown-content z-[1] card card-compact w-60 shadow-lg bg-base-100 text-base-content border-2 border-primary/20">
-                          <div className="card-body">
-                            <p className="text-sm">{friend.bio}</p>
+                {friends
+                  .filter(
+                    (friend) =>
+                      friend &&
+                      friend._id &&
+                      friend.username &&
+                      friend.profilePic
+                  )
+                  .map((friend) => (
+                    <div
+                      key={friend._id}
+                      className="card bg-base-200 hover:shadow-lg transition-all duration-300 group relative w-full sm:w-auto max-w-[95%] sm:max-w-full mx-auto sm:mx-0"
+                    >
+                      {friend.bio && (
+                        <div className="dropdown dropdown-hover dropdown-end absolute right-2 top-2 z-10">
+                          <label
+                            tabIndex={0}
+                            className="btn btn-ghost btn-xs btn-circle text-base-content/70 hover:text-base-content"
+                          >
+                            <InfoIcon className="size-4" />
+                          </label>{" "}
+                          <div className="dropdown-content z-[1] card card-compact w-60 shadow-lg bg-base-100 text-base-content border-2 border-primary/20">
+                            <div className="card-body">
+                              <p className="text-sm">{friend.bio}</p>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    )}
-                    <FriendCard friend={friend} />
-                  </div>
-                ))}
+                      )}
+                      <FriendCard friend={friend} />
+                    </div>
+                  ))}
               </div>
             )}
           </div>
@@ -243,99 +256,115 @@ const HomePage = () => {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {recommendedUsers.map((user) => {
-                const hasRequestBeenSent = outgoingRequestsIds.has(user._id);
-                const incomingRequestId = incomingRequestsMap.get(user._id);
-                const hasIncomingRequest = !!incomingRequestId;
+              {recommendedUsers
+                .filter(
+                  (user) =>
+                    user &&
+                    user._id &&
+                    user.username &&
+                    user.profilePic &&
+                    user.currentFocus &&
+                    user.skillTrack
+                )
+                .map((user) => {
+                  const hasRequestBeenSent = outgoingRequestsIds.has(user._id);
+                  const incomingRequestId = incomingRequestsMap.get(user._id);
+                  const hasIncomingRequest = !!incomingRequestId;
 
-                return (
-                  <div
-                    key={user._id}
-                    className="card bg-base-200 hover:shadow-lg transition-all duration-300"
-                  >
-                    <div className="card-body p-5 space-y-4">
-                      {" "}
-                      <div className="flex items-center gap-3">
-                        <div className="avatar size-16 rounded-full">
-                          <img
-                            src={user.profilePic}
-                            alt={`@${user.username}`}
-                          />
+                  return (
+                    <div
+                      key={user._id}
+                      className="card bg-base-200 hover:shadow-lg transition-all duration-300"
+                    >
+                      <div className="card-body p-5 space-y-4">
+                        {" "}
+                        <div className="flex items-center gap-3">
+                          <div className="avatar size-16 rounded-full">
+                            <img
+                              src={user.profilePic}
+                              alt={`@${user.username}`}
+                            />
+                          </div>{" "}
+                          <div>
+                            <h3 className="font-semibold text-lg font-mono">
+                              @{user.username}
+                            </h3>
+                            {user.location && (
+                              <div className="flex items-center text-xs opacity-70 mt-1">
+                                <MapPinIcon className="size-3 mr-1" />
+                                {user.location}
+                              </div>
+                            )}
+                          </div>
                         </div>{" "}
-                        <div>
-                          <h3 className="font-semibold text-lg font-mono">
-                            @{user.username}
-                          </h3>
-                          {user.location && (
-                            <div className="flex items-center text-xs opacity-70 mt-1">
-                              <MapPinIcon className="size-3 mr-1" />
-                              {user.location}
-                            </div>
-                          )}
+                        {/* Skills with icons */}{" "}
+                        <div className="flex flex-wrap gap-1.5">
+                          <span className="badge badge-secondary">
+                            {getLanguageFlag(user.currentFocus || "Unknown")}
+                            Current Focus:{" "}
+                            {capitialize(user.currentFocus || "Unknown")}
+                          </span>
+                          <span className="badge badge-outline">
+                            {getLanguageFlag(user.skillTrack || "Unknown")}
+                            Skill Track:{" "}
+                            {capitialize(user.skillTrack || "Unknown")}
+                          </span>{" "}
                         </div>
-                      </div>{" "}
-                      {/* Skills with icons */}{" "}
-                      <div className="flex flex-wrap gap-1.5">
-                        <span className="badge badge-secondary">
-                          {getLanguageFlag(user.currentFocus)}
-                          Current Focus: {capitialize(user.currentFocus)}
-                        </span>
-                        <span className="badge badge-outline">
-                          {getLanguageFlag(user.skillTrack)}
-                          Skill Track: {capitialize(user.skillTrack)}
-                        </span>{" "}
+                        {user.bio && (
+                          <div className="border-l-2 border-base-300 pl-3">
+                            <p className="text-sm opacity-70 line-clamp-2">
+                              {user.bio}
+                            </p>
+                          </div>
+                        )}{" "}
+                        {/* Action button */}
+                        {hasIncomingRequest ? (
+                          <button
+                            className="btn btn-accent w-full mt-2"
+                            onClick={() =>
+                              acceptRequestMutation(incomingRequestId)
+                            }
+                            disabled={acceptingRequestIds.has(
+                              incomingRequestId
+                            )}
+                          >
+                            <UserCheckIcon className="size-4 mr-2" />
+                            {acceptingRequestIds.has(incomingRequestId)
+                              ? "Accepting..."
+                              : "Accept Request"}
+                          </button>
+                        ) : (
+                          <button
+                            className={`btn w-full mt-2 ${
+                              hasRequestBeenSent
+                                ? "btn-disabled"
+                                : "btn-primary"
+                            }`}
+                            onClick={() => sendRequestMutation(user._id)}
+                            disabled={
+                              hasRequestBeenSent ||
+                              sendingRequestIds.has(user._id)
+                            }
+                          >
+                            {hasRequestBeenSent ? (
+                              <>
+                                <CheckCircleIcon className="size-4 mr-2" />
+                                Request Sent
+                              </>
+                            ) : (
+                              <>
+                                <UserPlusIcon className="size-4 mr-2" />
+                                {sendingRequestIds.has(user._id)
+                                  ? "Sending..."
+                                  : "Send Friend Request"}
+                              </>
+                            )}
+                          </button>
+                        )}
                       </div>
-                      {user.bio && (
-                        <div className="border-l-2 border-base-300 pl-3">
-                          <p className="text-sm opacity-70 line-clamp-2">
-                            {user.bio}
-                          </p>
-                        </div>
-                      )}{" "}
-                      {/* Action button */}
-                      {hasIncomingRequest ? (
-                        <button
-                          className="btn btn-accent w-full mt-2"
-                          onClick={() =>
-                            acceptRequestMutation(incomingRequestId)
-                          }
-                          disabled={acceptingRequestIds.has(incomingRequestId)}
-                        >
-                          <UserCheckIcon className="size-4 mr-2" />
-                          {acceptingRequestIds.has(incomingRequestId)
-                            ? "Accepting..."
-                            : "Accept Request"}
-                        </button>
-                      ) : (
-                        <button
-                          className={`btn w-full mt-2 ${
-                            hasRequestBeenSent ? "btn-disabled" : "btn-primary"
-                          }`}
-                          onClick={() => sendRequestMutation(user._id)}
-                          disabled={
-                            hasRequestBeenSent ||
-                            sendingRequestIds.has(user._id)
-                          }
-                        >
-                          {hasRequestBeenSent ? (
-                            <>
-                              <CheckCircleIcon className="size-4 mr-2" />
-                              Request Sent
-                            </>
-                          ) : (
-                            <>
-                              <UserPlusIcon className="size-4 mr-2" />
-                              {sendingRequestIds.has(user._id)
-                                ? "Sending..."
-                                : "Send Friend Request"}
-                            </>
-                          )}
-                        </button>
-                      )}
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
             </div>
           )}
         </section>
